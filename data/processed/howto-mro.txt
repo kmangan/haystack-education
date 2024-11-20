@@ -1,0 +1,446 @@
+The Python 2.3 Method Resolution
+Order
+Release 3.13.0
+Guido van Rossum and the Python development team
+November 15, 2024
+Python Software Foundation
+Email: docs@python.org
+Contents
+1 The beginning 2
+2 The C3 Method Resolution Order 3
+3 Examples 4
+4 Bad Method Resolution Orders 6
+5 The end 9
+6 Resources 10
+®Note
+This is a historical document, provided as an appendix to the official documentation. The Method Resolution
+Orderdiscussedherewas introduced inPython2.3,butitisstillusedinlaterversions–includingPython3.
+ByMicheleSimionato .
+Abstract
+This document is intended for Python programmers who want to understand the C3 Method Reso-
+lution Order used in Python 2.3. Although it is not intended for newbies, it is quite pedagogical with
+many worked out examples. I am not aware of other publicly available documents with the same
+scope, therefore it should be useful.
+Disclaimer:
+I donate this document to the Python Software Foundation, under the Python 2.3 license. As usual in these
+circumstances, I warn the reader that what follows should be correct, but I don’t give any warranty. Use
+it at your own risk and peril!
+Acknowledgments:
+All the people of the Python mailing list who sent me their support. Paul Foley who pointed out various
+imprecisions and made me to add the part on local precedence ordering. David Goodger for help with the
+1
+formatting in reStructuredText. David Mertz for help with the editing. Finally, Guido van Rossum who
+enthusiastically added this document to the official Python 2.3 home-page.
+1The beginning
+Felix qui potuit rerum cognoscere causas –Virgilius
+Everything started with a post by Samuele Pedroni to the Python development mailing list1. In his post, Samuele
+showed that the Python 2.2 method resolution order is not monotonic and he proposed to replace it with the C3
+methodresolutionorder. GuidoagreedwithhisargumentsandthereforenowPython2.3usesC3. TheC3method
+itselfhasnothingtodowithPython,sinceitwasinventedbypeopleworkingonDylananditisdescribedinapaper
+intendedforlispers2. Thepresentpapergivesa(hopefully)readablediscussionoftheC3algorithmforPythonistas
+whowanttounderstandthereasonsforthechange.
+First of all, let me point out that what I am going to say only applies to the new style classes introduced in Python
+2.2:classic classes maintaintheiroldmethodresolutionorder,depthfirstandthenlefttoright. Therefore,thereisno
+breakingofoldcodeforclassicclasses;andevenifinprincipletherecouldbebreakingofcodeforPython2.2new
+style classes, in practice the cases in which the C3 resolution order differs from the Python 2.2 method resolution
+orderaresorarethatnorealbreakingofcodeisexpected. Therefore:
+Don’t be scared!
+Moreover, unless you make strong use of multiple inheritance and you have non-trivial hierarchies, you don’t need
+to understand the C3 algorithm, and you can easily skip this paper. On the other hand, if you really want to know
+how multiple inheritance works, then this paper is for you. The good news is that things are not as complicated as
+youmightexpect.
+Letmebeginwithsomebasicdefinitions.
+1)GivenaclassCinacomplicatedmultipleinheritancehierarchy,itisanon-trivialtasktospecifytheorderin
+whichmethodsareoverridden,i.e. tospecifytheorderoftheancestorsofC.
+2)ThelistoftheancestorsofaclassC,includingtheclassitself,orderedfromthenearestancestortothefurthest,
+iscalledtheclassprecedencelistorthe linearization ofC.
+3)TheMethod Resolution Order (MRO)isthesetofrulesthatconstructthelinearization. InthePythonliterature,
+theidiom“theMROofC”isalsousedasasynonymousforthelinearizationoftheclassC.
+4)Forinstance,inthecaseofsingleinheritancehierarchy,ifCisasubclassofC1,andC1isasubclassofC2,
+thenthelinearizationofCissimplythelist[C,C1,C2]. However,withmultipleinheritancehierarchies,the
+constructionofthelinearizationismorecumbersome,sinceitismoredifficulttoconstructalinearizationthat
+respects local precedence ordering andmonotonicity .
+5)Iwilldiscussthelocalprecedenceorderinglater,butIcangivethedefinitionofmonotonicityhere. AMRO
+ismonotonicwhenthefollowingistrue: if C1 precedes C2 in the linearization of C, then C1 precedes C2 in the
+linearization of any subclass of C . Otherwise, the innocuous operation of deriving a new class could change
+the resolution order of methods, potentially introducing very subtle bugs. Examples where this happens will
+beshownlater.
+6)Not all classes admit a linearization. There are cases, in complicated hierarchies, where it is not possible to
+deriveaclasssuchthatitslinearizationrespectsallthedesiredproperties.
+HereIgiveanexampleofthissituation. Considerthehierarchy
+>>> O=object
+>>> class X(O): pass
+>>> class Y(O): pass
+>>> class A(X,Y): pass
+>>> class B(Y,X): pass
+1Thethreadonpython-devstartedbySamuelePedroni: https://mail.python.org/pipermail/python-dev/2002-October/029035.html
+2Thepaper A Monotonic Superclass Linearization for Dylan :https://doi.org/10.1145/236337.236343
+2
+whichcanberepresentedwiththefollowinginheritancegraph,whereIhavedenotedwithOthe objectclass,which
+isthebeginningofanyhierarchyfornewstyleclasses:
+-----------
+| |
+| O |
+| / \ |
+- X Y /
+| / | /
+| / |/
+A B
+\ /
+?
+Inthiscase,itisnotpossibletoderiveanewclassCfromAandB,sinceXprecedesYinA,butYprecedesXinB,
+thereforethemethodresolutionorderwouldbeambiguousinC.
+Python 2.3 raises an exception in this situation (TypeError: MRO conflict among bases Y, X) forbidding the naive
+programmerfromcreatingambiguoushierarchies. Python2.2insteaddoesnotraiseanexception,butchoosesan ad
+hocordering(CABXYOinthiscase).
+2The C3 Method Resolution Order
+Let me introduce a few simple notations which will be useful for the following discussion. I will use the shortcut
+notation:
+C1 C2 ...CN
+toindicatethelistofclasses[C1,C2,…,CN].
+Theheadofthelistisitsfirstelement:
+head =C1
+whereasthe tailistherestofthelist:
+tail =C2...CN.
+Ishallalsousethenotation:
+C+(C1 C2 ...CN) =C C1 C2 ...CN
+todenotethesumofthelists[C]+[C1,C2,…,CN].
+NowIcanexplainhowtheMROworksinPython2.3.
+ConsideraclassCinamultipleinheritancehierarchy,withCinheritingfromthebaseclassesB1,B2,…,BN.We
+wanttocomputethelinearizationL[C]oftheclassC.Theruleisthefollowing:
+the linearization of C is the sum of C plus the merge of the linearizations of the parents and the list of the
+parents.
+Insymbolicnotation:
+L[C(B1 ...BN)] =C+merge(L[B1] ...L[BN], B1 ...BN)
+Inparticular,ifCisthe objectclass,whichhasnoparents,thelinearizationistrivial:
+L[object ]=object .
+However,ingeneralonehastocomputethemergeaccordingtothefollowingprescription:
+3
+take the head of the first list, i.e L[B1][0]; if this head is not in the tail of any of the other lists, then add it
+to the linearization of C and remove it from the lists in the merge, otherwise look at the head of the next list
+and take it, if it is a good head. Then repeat the operation until all the class are removed or it is impossible
+to find good heads. In this case, it is impossible to construct the merge, Python 2.3 will refuse to create the
+class C and will raise an exception.
+Thisprescriptionensuresthatthemergeoperation preservestheordering,iftheorderingcanbepreserved. Onthe
+otherhand,iftheordercannotbepreserved(asintheexampleofseriousorderdisagreementdiscussedabove)then
+themergecannotbecomputed.
+ThecomputationofthemergeistrivialifChasonlyoneparent(singleinheritance);inthiscase:
+L[C(B)] =C+merge(L[B],B) =C+L[B]
+However,inthecaseofmultipleinheritancethingsaremorecumbersomeandIdon’texpectyoucanunderstandthe
+rulewithoutacoupleofexamples;-)
+3Examples
+Firstexample. Considerthefollowinghierarchy:
+>>> O=object
+>>> class F(O): pass
+>>> class E(O): pass
+>>> class D(O): pass
+>>> class C(D,F): pass
+>>> class B(D,E): pass
+>>> class A(B,C): pass
+Inthiscasetheinheritancegraphcanbedrawnas:
+6
+---
+Level 3 | O | (more general)
+/ --- \
+/ | \ |
+/ | \ |
+/ | \ |
+--- --- --- |
+Level 2 3 | D | 4| E | | F | 5 |
+--- --- --- |
+\ \ _ / | |
+\ / \ _ | |
+\ / \ | |
+--- --- |
+Level 1 1 | B | | C | 2 |
+--- --- |
+\ / |
+\ / \ /
+---
+Level 0 0 | A | (more specialized)
+---
+ThelinearizationsofO,D,EandFaretrivial:
+L[O] =O
+L[D] =D O
+L[E] =E O
+L[F] =F O
+4
+ThelinearizationofBcanbecomputedas:
+L[B] =B+merge(DO, EO, DE)
+WeseethatDisagoodhead,thereforewetakeitandwearereducedtocompute merge(O,EO,E) .NowOisnot
+a good head, since it is in the tail of the sequence EO. In this case the rule says that we have to skip to the next
+sequence. ThenweseethatEisagoodhead;wetakeitandwearereducedtocompute merge(O,O) whichgives
+O.Therefore:
+L[B] =B D E O
+Usingthesameprocedureonefinds:
+L[C] =C+merge(DO,FO,DF)
+=C+D+merge(O,FO,F)
+=C+D+F+merge(O,O)
+=C D F O
+Nowwecancompute:
+L[A] =A+merge(BDEO,CDFO,BC)
+=A+B+merge(DEO,CDFO,C)
+=A+B+C+merge(DEO,DFO)
+=A+B+C+D+merge(EO,FO)
+=A+B+C+D+E+merge(O,FO)
+=A+B+C+D+E+F+merge(O,O)
+=A B C D E F O
+Inthisexample,thelinearizationisorderedinaprettynicewayaccordingtotheinheritancelevel,inthesensethat
+lowerlevels(i.e. morespecializedclasses)havehigherprecedence(seetheinheritancegraph). However,thisisnot
+thegeneralcase.
+Ileaveasanexerciseforthereadertocomputethelinearizationformysecondexample:
+>>> O=object
+>>> class F(O): pass
+>>> class E(O): pass
+>>> class D(O): pass
+>>> class C(D,F): pass
+>>> class B(E,D): pass
+>>> class A(B,C): pass
+TheonlydifferencewiththepreviousexampleisthechangeB(D,E)–>B(E,D);howeverevensuchalittlemodifi-
+cationcompletelychangestheorderingofthehierarchy:
+6
+---
+Level 3 | O |
+/ --- \
+/ | \
+/ | \
+/ | \
+--- --- ---
+Level 2 2 | E | 4 | D | | F | 5
+--- --- ---
+\ / \ /
+\ / \ /
+\ / \ /
+--- ---
+(continuesonnextpage)
+5
+(continuedfrompreviouspage)
+Level 1 1 | B | | C | 3
+--- ---
+\ /
+\ /
+---
+Level 0 0 | A |
+---
+NoticethattheclassE,whichisinthesecondlevelofthehierarchy,precedestheclassC,whichisinthefirstlevel
+ofthehierarchy,i.e. EismorespecializedthanC,evenifitisinahigherlevel.
+AlazyprogrammercanobtaintheMROdirectlyfromPython2.2,sinceinthiscaseitcoincideswiththePython2.3
+linearization. Itisenoughtoinvokethe mro()methodofclassA:
+>>> A.mro()
+[<class 'A'>, <class 'B'>, <class 'E'>,
+<class 'C'>, <class 'D'>, <class 'F'>,
+<class 'object'>]
+Finally, let me consider the example discussed in the first section, involving a serious order disagreement. In this
+case,itisstraightforwardtocomputethelinearizationsofO,X,Y,AandB:
+L[O] = 0
+L[X] = X O
+L[Y] = Y O
+L[A] = A X Y O
+L[B] = B Y X O
+However,itisimpossibletocomputethelinearizationforaclassCthatinheritsfromAandB:
+L[C] =C+merge(AXYO, BYXO, AB)
+=C+A+merge(XYO, BYXO, B)
+=C+A+B+merge(XYO, YXO)
+AtthispointwecannotmergethelistsXYOandYXO,sinceXisinthetailofYXOwhereasYisinthetailofXYO:
+therefore there are no good heads and the C3 algorithm stops. Python 2.3 raises an error and refuses to create the
+classC.
+4Bad Method Resolution Orders
+AMROis badwhenitbreakssuchfundamentalpropertiesaslocalprecedenceorderingandmonotonicity. Inthis
+section,IwillshowthatboththeMROforclassicclassesandtheMROfornewstyleclassesinPython2.2arebad.
+Itiseasiertostartwiththelocalprecedenceordering. Considerthefollowingexample:
+>>> F=type ('Food ',(),{ 'remember2buy ':'spam '})
+>>> E=type ('Eggs ',(F,),{ 'remember2buy ':'eggs '})
+>>> G=type ('GoodFood ',(F,E),{}) # under Python 2.3 this is an error!
+withinheritancediagram
+O
+|
+(buy spam) F
+| \
+| E (buy eggs)
+| /
+(continuesonnextpage)
+6
+(continuedfrompreviouspage)
+G
+(buy eggs or spam ?)
+WeseethatclassGinheritsfromFandE,withF beforeE:thereforewewouldexpecttheattribute G.remember2buy
+tobeinheritedby F.rembermer2buy andnotby E.remember2buy : neverthelessPython2.2gives
+>>> G.remember2buy
+'eggs'
+Thisisabreakingoflocalprecedenceorderingsincetheorderinthelocalprecedencelist,i.e. thelistoftheparents
+ofG,isnotpreservedinthePython2.2linearizationofG:
+L[G,P22] =G E F object # F *follows* E
+OnecouldarguethatthereasonwhyFfollowsEinthePython2.2linearizationisthatFislessspecializedthanE,
+sinceFisthesuperclassofE;neverthelessthebreakingoflocalprecedenceorderingisquitenon-intuitiveanderror
+prone. Thisisparticularlytruesinceitisadifferentfromoldstyleclasses:
+>>> class F: remember2buy ='spam '
+>>> class E(F): remember2buy ='eggs '
+>>> class G(F,E): pass
+>>> G.remember2buy
+'spam'
+InthiscasetheMROisGFEFandthelocalprecedenceorderingispreserved.
+Asageneralrule, hierarchiessuchasthepreviousoneshouldbeavoided, sinceitisunclearifFshouldoverrideE
+orvice-versa. Python2.3solvestheambiguitybyraisinganexceptioninthecreationofclassG,effectivelystopping
+theprogrammerfromgeneratingambiguoushierarchies. ThereasonforthatisthattheC3algorithmfailswhenthe
+merge:
+merge(FO,EFO,FE)
+cannotbecomputed,becauseFisinthetailofEFOandEisinthetailofFE.
+Therealsolutionistodesignanon-ambiguoushierarchy,i.e. toderiveGfromEandF(themorespecificfirst)and
+notfromFandE;inthiscasetheMROisGEFwithoutanydoubt.
+O
+|
+F (spam)
+/ |
+(eggs) E |
+\ |
+G
+(eggs, no doubt)
+Python2.3forcestheprogrammertowritegoodhierarchies(or,atleast,lesserror-proneones).
+Onarelatednote,letmepointoutthatthePython2.3algorithmissmartenoughtorecognizeobviousmistakes,as
+theduplicationofclassesinthelistofparents:
+>>> class A(object ):pass
+>>> class C(A,A): pass # error
+Traceback (most recent call last):
+File "<stdin>" , line 1, in ?
+TypeError : duplicate base class A
+7
+Python2.2(bothforclassicclassesandnewstyleclasses)inthissituation,wouldnotraiseanyexception.
+Finally,Iwouldliketopointouttwolessonswehavelearnedfromthisexample:
+1.despitethename,theMROdeterminestheresolutionorderofattributes,notonlyofmethods;
+2.thedefaultfoodforPythonistasisspam! (butyoualreadyknewthat;-)
+Havingdiscussedtheissueoflocalprecedenceordering,letmenowconsidertheissueofmonotonicity. Mygoalis
+toshowthatneithertheMROforclassicclassesnorthatforPython2.2newstyleclassesismonotonic.
+To prove that the MRO for classic classes is non-monotonic is rather trivial, it is enough to look at the diamond
+diagram:
+C
+/ \
+/ \
+A B
+\ /
+\ /
+D
+Oneeasilydiscernstheinconsistency:
+L[B,P21] =B C # B precedes C : B's methods win
+L[D,P21] =D A C B C # B follows C : C's methods win!
+Ontheotherhand,therearenoproblemswiththePython2.2and2.3MROs,theygiveboth:
+L[D] =D A B C
+Guido points out in his essay3that the classic MRO is not so bad in practice, since one can typically avoids dia-
+monds for classic classes. But all new style classes inherit from object, therefore diamonds are unavoidable and
+inconsistenciesshowsupineverymultipleinheritancegraph.
+TheMROofPython2.2makesbreakingmonotonicitydifficult,butnotimpossible. Thefollowingexample,originally
+providedbySamuelePedroni,showsthattheMROofPython2.2isnon-monotonic:
+>>> class A(object ):pass
+>>> class B(object ):pass
+>>> class C(object ):pass
+>>> class D(object ):pass
+>>> class E(object ):pass
+>>> class K1(A,B,C): pass
+>>> class K2(D,B,E): pass
+>>> class K3(D,A): pass
+>>> class Z(K1,K2,K3): pass
+HerearethelinearizationsaccordingtotheC3MRO(thereadershouldverifytheselinearizationsasanexerciseand
+drawtheinheritancediagram;-)
+L[A] =A O
+L[B] =B O
+L[C] =C O
+L[D] =D O
+L[E] =E O
+L[K1] =K1 A B C O
+L[K2] =K2 D B E O
+L[K3] =K3 D A O
+L[Z] =Z K1 K2 K3 D A B C E O
+3GuidovanRossum’sessay, Unifying types and classes in Python 2.2 :https://web.archive.org/web/20140210194412/http://www.python.org/
+download/releases/2.2.2/descrintro
+8
+Python2.2givesexactlythesamelinearizationsforA,B,C,D,E,K1,K2andK3,butadifferentlinearizationforZ:
+L[Z,P22] =Z K1 K3 A K2 D B C E O
+Itisclearthatthislinearizationis wrong,sinceAcomesbeforeDwhereasinthelinearizationofK3Acomes after
+D.Inotherwords,inK3methodsderivedbyDoverridemethodsderivedbyA,butinZ,whichstillisasubclassof
+K3,methodsderivedbyAoverridemethodsderivedbyD!Thisisaviolationofmonotonicity. Moreover,thePython
+2.2linearizationofZisalsoinconsistentwithlocalprecedenceordering,sincethelocalprecedencelistoftheclass
+Zis[K1,K2,K3](K2precedesK3),whereasinthelinearizationofZK2 followsK3. Theseproblemsexplainwhy
+the2.2rulehasbeendismissedinfavoroftheC3rule.
+5The end
+Thissectionisfortheimpatientreader,whoskippedalltheprevioussectionsandjumpedimmediatelytotheend. This
+sectionisforthelazyprogrammertoo,whodidn’twanttoexerciseher/hisbrain. Finally,itisfortheprogrammerwith
+somehubris,otherwises/hewouldnotbereadingapaperontheC3methodresolutionorderinmultipleinheritance
+hierarchies;-)Thesethreevirtuestakenalltogether(and notseparately)deserveaprize: theprizeisashortPython
+2.2 script that allows you to compute the 2.3 MRO without risk to your brain. Simply change the last line to play
+withthevariousexamplesIhavediscussedinthispaper.:
+#<mro.py>
+"""C3 algorithm by Samuele Pedroni (with readability enhanced by me)."""
+class __metaclass__ (type ):
+"All classes are metamagically modified to be nicely printed "
+__repr__ =lambda cls:cls.__name__
+class ex_2 :
+"Serious order disagreement "#From Guido
+class O:pass
+class X(O): pass
+class Y(O): pass
+class A(X,Y): pass
+class B(Y,X): pass
+try:
+class Z(A,B): pass #creates Z(A,B) in Python 2.2
+except TypeError :
+pass # Z(A,B) cannot be created in Python 2.3
+class ex_5 :
+"My first example "
+class O:pass
+class F(O): pass
+class E(O): pass
+class D(O): pass
+class C(D,F): pass
+class B(D,E): pass
+class A(B,C): pass
+class ex_6 :
+"My second example "
+class O:pass
+class F(O): pass
+class E(O): pass
+class D(O): pass
+class C(D,F): pass
+(continuesonnextpage)
+9
+(continuedfrompreviouspage)
+class B(E,D): pass
+class A(B,C): pass
+class ex_9 :
+"Difference between Python 2.2 MRO and C3 "#From Samuele
+class O:pass
+class A(O): pass
+class B(O): pass
+class C(O): pass
+class D(O): pass
+class E(O): pass
+class K1(A,B,C): pass
+class K2(D,B,E): pass
+class K3(D,A): pass
+class Z(K1,K2,K3): pass
+def merge (seqs):
+print '\n\nCPL[ %s]=%s'%(seqs[ 0][0],seqs),
+res =[]; i =0
+while 1:
+nonemptyseqs =[seq for seq inseqs ifseq]
+ifnot nonemptyseqs: return res
+i+=1;print '\n',i,'round: candidates... ',
+for seq innonemptyseqs: # find merge candidates among seq heads
+cand =seq[ 0];print '',cand,
+nothead =[sfor sinnonemptyseqs ifcand ins[1:]]
+ifnothead: cand =None #reject candidate
+else :break
+ifnot cand: raise "Inconsistent hierarchy "
+res.append(cand)
+for seq innonemptyseqs: # remove cand
+ifseq[ 0]==cand: del seq[ 0]
+def mro(C):
+"Compute the class precedence list (mro) according to C3 "
+return merge([[C]] +map(mro,C .__bases__ )+[list (C.__bases__ )])
+def print_mro (C):
+print '\nMRO[ %s]=%s'%(C,mro(C))
+print '\nP22 MRO[ %s]=%s'%(C,C .mro())
+print_mro(ex_9 .Z)
+#</mro.py>
+That’sallfolks,
+enjoy!
+6Resources
+10

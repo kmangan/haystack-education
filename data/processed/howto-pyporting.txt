@@ -1,0 +1,28 @@
+How to port Python 2 Code to Python 3
+Release 3.13.0
+Guido van Rossum and the Python development team
+November 15, 2024
+Python Software Foundation
+Email: docs@python.org
+Contents
+1 Third-party guides 1
+Index 2
+author
+Brett Cannon
+Python 2 reached its official end-of-life at the start of 2020. This means that no new bug reports, fixes, or changes
+will be made to Python 2 - it’s no longer supported: see PEP 373 andstatus of Python versions .
+If you are looking to port an extension module instead of pure Python code, please see cporting-howto.
+The archived python-porting mailing list may contain some useful guidance.
+Since Python 3.11 the original porting guide was discontinued. You can find the old guide in the archive .
+1Third-party guides
+There are also multiple third-party guides that might be useful:
+•Guide by Fedora
+•PyCon 2020 tutorial
+•Guide by DigitalOcean
+•Guide by ActiveState
+1
+Index
+P
+Python Enhancement Proposals
+PEP 373 ,1
+2

@@ -1,0 +1,16 @@
+Porting Extension Modules to Python
+3
+Release 3.13.0
+Guido van Rossum and the Python development team
+November 15, 2024
+Python Software Foundation
+Email: docs@python.org
+Contents
+We recommend the following resources for porting extension modules to Python 3:
+•TheMigrating C extensions chapter from Supporting Python 3: An in-depth guide , a book on moving from
+Python 2 to Python 3 in general, guides the reader through porting an extension module.
+•ThePorting guide from the py3cproject provides opinionated suggestions with supporting code.
+•TheCython andCFFI libraries offer abstractions over Python’s C API. Extensions generally need to be re-
+written to use one of them, but the library then handles differences between various Python versions and
+implementations.
+1

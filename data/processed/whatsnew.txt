@@ -1,0 +1,1748 @@
+What’s New in Python
+Release 3.13.0
+A. M. Kuchling
+November 15, 2024
+Python Software Foundation
+Email: docs@python.org
+Contents
+1 Summary – Release Highlights 3
+2 New Features 5
+2.1 Abetterinteractiveinterpreter . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 5
+2.2 Improvederrormessages . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 5
+2.3 Free-threadedCPython . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 6
+2.4 Anexperimentaljust-in-time(JIT)compiler . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 7
+2.5 Definedmutationsemanticsfor locals() . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 7
+2.6 Supportformobileplatforms . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 8
+3 Other Language Changes 8
+4 New Modules 10
+5 Improved Modules 10
+5.1 argparse . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 10
+5.2 array . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 10
+5.3 ast. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 10
+5.4 asyncio . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 10
+5.5 base64 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 11
+5.6 compileall . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 11
+5.7 concurrent.futures . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 11
+5.8 configparser . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 11
+5.9 copy . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 11
+5.10 ctypes . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 12
+5.11 dbm . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 12
+5.12 dis. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 12
+5.13 doctest . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 12
+5.14 email . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 12
+5.15 fractions . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 12
+5.16 glob . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 13
+5.17 importlib . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 13
+5.18 io. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 13
+5.19 ipaddress . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 13
+5.20 itertools . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 13
+5.21 marshal . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 13
+5.22 math . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 13
+5.23 mimetypes . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 14
+1
+5.24 mmap . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 14
+5.25 multiprocessing . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 14
+5.26 os. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 14
+5.27 os.path . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 14
+5.28 pathlib . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 15
+5.29 pdb . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 15
+5.30 queue . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 15
+5.31 random . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 15
+5.32 re. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 15
+5.33 shutil . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 15
+5.34 site. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 16
+5.35 sqlite3 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 16
+5.36 ssl. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 16
+5.37 statistics . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 16
+5.38 subprocess . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 16
+5.39 sys. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 16
+5.40 tempfile . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 17
+5.41 time . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 17
+5.42 tkinter . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 17
+5.43 traceback . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 17
+5.44 types . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 18
+5.45 typing . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 18
+5.46 unicodedata . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 18
+5.47 venv . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 18
+5.48 warnings . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 18
+5.49 xml . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 18
+5.50 zipimport . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 19
+6 Optimizations 19
+7 Removed Modules And APIs 19
+7.1 PEP594: Remove“deadbatteries”fromthestandardlibrary . . . . . . . . . . . . . . . . . . . . . 19
+7.2 2to3 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 20
+7.3 builtins . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 20
+7.4 configparser . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 20
+7.5 importlib.metadata . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 20
+7.6 locale . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 21
+7.7 opcode . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 21
+7.8 pathlib . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 21
+7.9 re. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 21
+7.10 tkinter.tix . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 21
+7.11 turtle . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 21
+7.12 typing . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 21
+7.13 unittest . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 21
+7.14 urllib . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 22
+7.15 webbrowser . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 22
+8 New Deprecations 22
+8.1 PendingRemovalinPython3.14 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 24
+8.2 PendingRemovalinPython3.15 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 25
+8.3 PendingremovalinPython3.16 . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 26
+8.4 PendingRemovalinFutureVersions . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 27
+9 CPython Bytecode Changes 29
+10 C API Changes 29
+10.1 NewFeatures . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 29
+10.2 ChangedCAPIs . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 32
+10.3 LimitedCAPIChanges . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 33
+2
+10.4 RemovedCAPIs . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 33
+10.5 DeprecatedCAPIs . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 35
+11 Build Changes 37
+12 Porting to Python 3.13 38
+12.1 ChangesinthePythonAPI . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 38
+12.2 ChangesintheCAPI . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 38
+13 Regression Test Changes 39
+14 Notable changes in 3.13.1 40
+14.1 sys. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 40
+Index 41
+Editors
+AdamTurnerandThomasWouters
+This article explains the new features in Python 3.13, compared to 3.12. Python 3.13 was released on October 7,
+2024. Forfulldetails,seethechangelog.
+µSee also
+PEP 719–Python3.13ReleaseSchedule
+1Summary – Release Highlights
+Python3.13isthelateststablereleaseofthePythonprogramminglanguage,withamixofchangestothelanguage,
+theimplementationandthestandardlibrary. Thebiggestchangesincludeanew interactive interpreter ,experimental
+supportforrunningina free-threaded mode (PEP 703),anda Just-In-Time compiler (PEP 744).
+Error messages continue to improve, with tracebacks now highlighted in color by default. The locals() builtin
+nowhas defined semantics forchangingthereturnedmapping,andtypeparametersnowsupportdefaultvalues.
+The library changes contain removal of deprecated APIs and modules, as well as the usual improvements in user-
+friendlinessandcorrectness. Severallegacystandardlibrarymoduleshavenow been removed followingtheirdepre-
+cationinPython3.11( PEP 594).
+This article doesn’t attempt to provide a complete specification of all new features, but instead gives a convenient
+overview. For full details refer to the documentation, such as the Library Reference and Language Reference. To
+understand the complete implementation and design rationale for a change, refer to the PEP for a particular new
+feature;butnotethatPEPsusuallyarenotkeptup-to-dateonceafeaturehasbeenfullyimplemented. See Porting to
+Python 3.13 forguidanceonupgradingfromearlierversionsofPython.
+Interpreterimprovements:
+•Agreatlyimproved interactive interpreter andimproved error messages .
+•PEP 667: The locals() builtin now has defined semantics when mutating the returned mapping. Python
+debuggers and similar tools may now more reliably update local variables in optimized scopes even during
+concurrentcodeexecution.
+•PEP 703: CPython3.13hasexperimentalsupportforrunningwiththeglobalinterpreterlockdisabled. See
+Free-threaded CPython formoredetails.
+•PEP 744: Abasic JIT compiler wasadded. Itiscurrentlydisabledbydefault(thoughwemayturnitonlater).
+Performanceimprovementsaremodest–weexpecttoimprovethisoverthenextfewreleases.
+3
+•Colorsupportinthenew interactive interpreter ,aswellasin tracebacks anddoctestoutput. Thiscanbedisabled
+throughthe PYTHON_COLORS andNO_COLOR environmentvariables.
+Pythondatamodelimprovements:
+•__static_attributes__ storesthenamesofattributesaccessedthrough self.Xinanyfunctioninaclass
+body.
+•__firstlineno__ recordsthefirstlinenumberofaclassdefinition.
+Significantimprovementsinthestandardlibrary:
+•Addanew PythonFinalizationError exception,raisedwhenanoperationisblockedduringfinalization.
+•Theargparse modulenowsupportsdeprecatingcommand-lineoptions,positionalarguments,andsubcom-
+mands.
+•Thenewfunctions base64.z85encode() andbase64.z85decode() supportencodinganddecoding Z85
+data.
+•Thecopymodule now has a copy.replace() function, with support for many builtin types and any class
+definingthe __replace__() method.
+•Thenew dbm.sqlite3 moduleisnowthedefault dbmbackend.
+•TheosmodulehasasuiteofnewfunctionsforworkingwithLinux’stimernotificationfiledescriptors.
+•Therandommodulenowhasacommand-lineinterface.
+Securityimprovements:
+•ssl.create_default_context() sets ssl.VERIFY_X509_PARTIAL_CHAIN and ssl.
+VERIFY_X509_STRICT asdefaultflags.
+CAPIimprovements:
+•ThePy_mod_gil slotisnowusedtoindicatethatanextensionmodulesupportsrunningwiththeGILdisabled.
+•ThePyTimeCAPIhasbeenadded,providingaccesstosystemclocks.
+•PyMutexisanewlightweightmutexthatoccupiesasinglebyte.
+•Thereisanewsuiteoffunctionsforgenerating PEP 669monitoringeventsintheCAPI.
+Newtypingfeatures:
+•PEP 696: Typeparameters( typing.TypeVar ,typing.ParamSpec ,and typing.TypeVarTuple )now
+supportdefaults.
+•PEP 702: Thenew warnings.deprecated() decoratoraddssupportformarkingdeprecationsinthetype
+systemandatruntime.
+•PEP 705:typing.ReadOnly canbeusedtomarkanitemofa typing.TypedDict asread-onlyfortype
+checkers.
+•PEP 742:typing.TypeIs provides more intuitive type narrowing behavior, as an alternative to typing.
+TypeGuard .
+Platformsupport:
+•PEP 730: Apple’siOSisnowan officially supported platform ,attier 3.
+•PEP 738: Androidisnowan officially supported platform ,attier 3.
+•wasm32-wasi isnowsupportedasa tier 2platform.
+•wasm32-emscripten isnolongeranofficiallysupportedplatform.
+Importantremovals:
+•PEP 594: The remaining 19 “dead batteries” (legacy stdlib modules) have been removed from the stan-
+dard library: aifc,audioop,cgi,cgitb,chunk,crypt,imghdr,mailcap,msilib,nis,nntplib,
+ossaudiodev ,pipes,sndhdr,spwd,sunau,telnetlib ,uuandxdrlib.
+4
+•Removethe 2to3tooland lib2to3module(deprecatedinPython3.11).
+•Removethe tkinter.tix module(deprecatedinPython3.6).
+•Removethe locale.resetlocale() function.
+•Removethe typing.io andtyping.re namespaces.
+•Removechained classmethod descriptors.
+Releaseschedulechanges:
+PEP 602(“AnnualReleaseCycleforPython”)hasbeenupdatedtoextendthefullsupport(‘bugfix’)periodfornew
+releasestotwoyears. Thisupdatedpolicymeansthat:
+•Python3.9–3.12haveoneandahalfyearsoffullsupport,followedbythreeandahalfyearsofsecurityfixes.
+•Python3.13andlaterhavetwoyearsoffullsupport,followedbythreeyearsofsecurityfixes.
+2New Features
+2.1A better interactive interpreter
+Pythonnowusesanewinteractiveshellbydefault,basedoncodefromthe PyPyproject . Whentheuserstartsthe
+REPLfromaninteractiveterminal,thefollowingnewfeaturesarenowsupported:
+•Multilineeditingwithhistorypreservation.
+•Direct support for REPL-specific commands like help,exit, and quit, without the need to call them as
+functions.
+•Promptsandtracebackswithcolorenabledbydefault.
+•Interactivehelpbrowsingusing F1withaseparatecommandhistory.
+•Historybrowsingusing F2thatskipsoutputaswellasthe»>and…prompts.
+•“Pastemode”with F3thatmakespastinglargerblocksofcodeeasier(press F3againtoreturntotheregular
+prompt).
+To disable the new interactive shell, set the PYTHON_BASIC_REPL environment variable. For more on interactive
+mode,seetut-interac.
+(ContributedbyPabloGalindoSalgado,ŁukaszLanga,andLysandrosNikolaouin gh-111201 basedoncodefrom
+thePyPyproject. WindowssupportcontributedbyDinoViehlandandAnthonyShaw.)
+2.2Improved error messages
+•The interpreter now uses color by default when displaying tracebacks in the terminal. This feature can
+be controlled via the new PYTHON_COLORS environment variable as well as the canonical NO_COLOR and
+FORCE_COLOR environmentvariables. (ContributedbyPabloGalindoSalgadoin gh-112730 .)
+•Acommonmistakeistowriteascriptwiththesamenameasastandardlibrarymodule. Whenthisresultsin
+errors,wenowdisplayamorehelpfulerrormessage:
+$ python random.py
+Traceback (most recent call last):
+File "/home/me/random.py" , line 1, in <module>
+import random
+File "/home/me/random.py" , line 3, in <module>
+print (random .randint( 5))
+^^^^^^^^^^^^^^
+AttributeError : module 'random' has no attribute 'randint' (consider renaming
+,→'/home/me/random.py' since it has the same name as the standard library ␣
+,→module named 'random' and prevents importing that standard library module)
+5
+Similarly, if a script has the same name as a third-party module that it attempts to import and this results in
+errors,wealsodisplayamorehelpfulerrormessage:
+$ python numpy.py
+Traceback (most recent call last):
+File "/home/me/numpy.py" , line 1, in <module>
+import numpy asnp
+File "/home/me/numpy.py" , line 3, in <module>
+np.array([ 1,2,3])
+^^^^^^^^
+AttributeError : module 'numpy' has no attribute 'array' (consider renaming '/
+,→home/me/numpy.py' if it has the same name as a library you intended to ␣
+,→import)
+(ContributedbyShantanuJainin gh-95754.)
+•Theerrormessagenowtriestosuggestthecorrectkeywordargumentwhenanincorrectkeywordargumentis
+passedtoafunction.
+>>> "Better error messages! ".split(max_split =1)
+Traceback (most recent call last):
+File "<python-input-0>" , line 1, in <module>
+"Better error messages! ".split(max_split =1)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+TypeError : split() got an unexpected keyword argument 'max_split'. Did you ␣
+,→mean 'maxsplit'?
+(ContributedbyPabloGalindoSalgadoandShantanuJainin gh-107944 .)
+2.3Free-threaded CPython
+CPythonnowhasexperimentalsupportforrunninginafree-threadedmode,withtheglobalinterpreterlock(GIL)
+disabled. Thisisanexperimentalfeatureandthereforeisnotenabledbydefault. Thefree-threadedmoderequires
+a different executable, usually called python3.13t orpython3.13t.exe . Pre-built binaries marked as free-
+threadedcanbeinstalledaspartoftheofficialWindowsandmacOSinstallers,orCPythoncanbebuiltfromsource
+withthe --disable-gil option.
+Free-threadedexecutionallowsforfullutilizationoftheavailableprocessingpowerbyrunningthreadsinparallelon
+availableCPUcores. Whilenotallsoftwarewillbenefitfromthisautomatically,programsdesignedwiththreading
+inmindwillrunfasteronmulti-corehardware. The free-threaded mode is experimental andworkisongoingto
+improve it: expect some bugs and a substantial single-threaded performance hit. Free-threaded builds of CPython
+support optionally running with the GIL enabled at runtime using the environment variable PYTHON_GIL or the
+command-lineoption -X gil=1 .
+Tocheckifthecurrentinterpretersupportsfree-threading, python -VV andsys.version contain“experimental
+free-threading build”. The new sys._is_gil_enabled() function can be used to check whether the GIL is
+actuallydisabledintherunningprocess.
+C-API extension modules need to be built specifically for the free-threaded build. Extensions that support run-
+ning with the GIL disabled should use the Py_mod_gil slot. Extensions using single-phase init should use
+PyUnstable_Module_SetGIL() to indicate whether they support running with the GIL disabled. Importing C
+extensions that don’t use these mechanisms will cause the GIL to be enabled, unless the GIL was explicitly dis-
+abledwiththe PYTHON_GIL environmentvariableorthe -X gil=0 option. pip24.1ornewerisrequiredtoinstall
+packageswithCextensionsinthefree-threadedbuild.
+Thisworkwasmadepossiblethankstomanyindividualsandorganizations,includingthelargecommunityofcon-
+tributorstoPythonandthird-partyprojectstotestandenablefree-threadingsupport. Notablecontributorsinclude:
+Sam Gross, Ken Jin, Donghee Na, Itamar Oren, Matt Page, Brett Simmers, Dino Viehland, Carl Meyer, Nathan
+Goldbaum, Ralf Gommers, Lysandros Nikolaou, and many others. Many of these contributors are employed by
+Meta,whichhasprovidedsignificantengineeringresourcestosupportthisproject.
+6
+µSee also
+PEP 703“Making the Global Interpreter Lock Optional in CPython” contains rationale and information sur-
+roundingthiswork.
+Porting Extension Modules to Support Free-Threading : A community-maintained porting guide for extension
+authors.
+2.4An experimental just-in-time (JIT) compiler
+When CPython is configured and built using the --enable-experimental-jit option, a just-in-time (JIT)
+compiler is added which may speed up some Python programs. On Windows, use PCbuild/build.bat
+--experimental-jit to enable the JIT or --experimental-jit-interpreter to enable the Tier 2 inter-
+preter. Buildrequirementsandfurthersupportinginformation arecontainedat Tools/jit/README.md .
+The --enable-experimental-jit option takes these (optional) values, defaulting to yesif
+--enable-experimental-jit ispresentwithouttheoptionalvalue.
+•no: DisabletheentireTier2andJITpipeline.
+•yes: EnabletheJIT.TodisabletheJITatruntime,passtheenvironmentvariable PYTHON_JIT=0 .
+•yes-off: BuildtheJITbutdisableitbydefault. ToenabletheJITatruntime,passtheenvironmentvariable
+PYTHON_JIT=1 .
+•interpreter : EnabletheTier2interpreterbutdisabletheJIT.Theinterpretercanbedisabledbyrunning
+withPYTHON_JIT=0 .
+Theinternalarchitectureisroughlyasfollows:
+•Westartwithspecialized Tier 1 bytecode . SeeWhat’snewin3.11fordetails.
+•WhentheTier1bytecodegetshotenough,itgetstranslatedtoanewpurelyinternalintermediaterepresentation
+(IR),calledthe Tier 2 IR,andsometimesreferredtoasmicro-ops(“uops”).
+•TheTier2IRusesthesamestack-basedvirtualmachineasTier1,buttheinstructionformatisbettersuited
+totranslationtomachinecode.
+•We have several optimization passes for Tier 2 IR, which are applied before it is interpreted or translated to
+machinecode.
+•There is a Tier 2 interpreter, but it is mostly intended for debugging the earlier stages of
+the optimization pipeline. The Tier 2 interpreter can be enabled by configuring Python with
+--enable-experimental-jit=interpreter .
+•WhentheJITisenabled,theoptimizedTier2IRistranslatedtomachinecode,whichisthenexecuted.
+•Themachinecodetranslationprocessusesatechniquecalled copy-and-patch . Ithasnoruntimedependencies,
+butthereisanewbuild-timedependencyonLLVM.
+µSee also
+PEP 744
+(JIT by Brandt Bucher, inspired by a paper by Haoran Xu and Fredrik Kjolstad. Tier 2 IR by Mark Shannon and
+GuidovanRossum. Tier2optimizerbyKenJin.)
+2.5Defined mutation semantics for locals()
+Historically, the expected result of mutating the return value of locals() has been left to individual Python im-
+plementations to define. Starting from Python 3.13, PEP 667standardises the historical behavior of CPython for
+mostcodeexecutionscopes,butchangesoptimizedscopes(functions,generators,coroutines,comprehensions,and
+generatorexpressions)toexplicitlyreturnindependentsnapshotsofthecurrentlyassignedlocalvariables,including
+locallyreferencednonlocalvariablescapturedinclosures.
+7
+Thischangetothesemanticsof locals() inoptimizedscopesalsoaffectsthedefaultbehaviorofcodeexecution
+functions that implicitly target locals() if no explicit namespace is provided (such as exec()andeval()). In
+previous versions, whether or not changes could be accessed by calling locals() after calling the code execution
+function was implementation-dependent. In CPython specifically, such code would typically appear to work as de-
+sired, but could sometimes fail in optimized scopes based on other code (including debuggers and code execution
+tracingtools)potentiallyresettingthesharedsnapshotinthatscope. Now,thecodewillalwaysrunagainstaninde-
+pendentsnapshotofthelocalvariablesinoptimizedscopes,andhencethechangeswillneverbevisibleinsubsequent
+callsto locals() . Toaccessthechangesmadeinthesecases,anexplicitnamespacereferencemustnowbepassed
+totherelevantfunction. Alternatively,itmaymakesensetoupdateaffectedcodetouseahigherlevelcodeexecution
+API that returns the resulting code execution namespace (e.g. runpy.run_path() when executing Python files
+fromdisk).
+To ensure debuggers and similar tools can reliably update local variables in scopes affected by this change,
+FrameType.f_locals nowreturnsawrite-throughproxytotheframe’slocalandlocallyreferencednonlocalvari-
+ablesinthesescopes,ratherthanreturninganinconsistentlyupdatedshared dictinstancewithundefinedruntime
+semantics.
+SeePEP 667for more details, including related C API changes and deprecations. Porting notes are also provided
+belowfortheaffected Python APIs andC APIs.
+(PEP and implementation contributed by Mark Shannon and Tian Gao in gh-74929. Documentation updates pro-
+videdbyGuidovanRossumandAlyssaCoghlan.)
+2.6Support for mobile platforms
+PEP 730 : iOS is now a PEP 11 supported platform, with the arm64-apple-ios and
+arm64-apple-ios-simulator targetsattier3(iPhoneandiPaddevicesreleasedafter2013andtheXcodeiOS
+simulator running on Apple silicon hardware, respectively). x86_64-apple-ios-simulator (the Xcode iOS
+simulator running on older x86_64hardware) is not a tier 3 supported platform, but will have best-effort support.
+(PEPwrittenandimplementationcontributedbyRussellKeith-Mageein gh-114099 .)
+PEP 738 : Android is now a PEP 11 supported platform, with the aarch64-linux-android
+and x86_64-linux-android targets at tier 3. The 32-bit targets arm-linux-androideabi and
+i686-linux-android are not tier 3 supported platforms, but will have best-effort support. (PEP written
+andimplementationcontributedbyMalcolmSmithin gh-116622 .)
+µSee also
+PEP 730,PEP 738
+3Other Language Changes
+•Thecompilernowstripscommonleadingwhitespacefromeverylineinadocstring. Thisreducesthesizeofthe
+bytecodecache(suchas .pycfiles),withreductionsinfilesizeofaround5%,forexamplein sqlalchemy.
+orm.session fromSQLAlchemy2.0. Thischangeaffectstoolsthatusedocstrings,suchas doctest.
+>>> def spam ():
+... """
+... This is a docstring with
+... leading whitespace.
+...
+... It even has multiple paragraphs!
+... """
+...
+>>> spam .__doc__
+'\nThis is a docstring with\n leading whitespace.\n\nIt even has multiple ␣
+,→paragraphs!\n'
+(ContributedbyInadaNaokiin gh-81283.)
+8
+•Annotation scopes within class scopes can now contain lambdas and comprehensions. Comprehensions that
+arelocatedwithinclassscopesarenotinlinedintotheirparentscope.
+class C[T]:
+type Alias =lambda : T
+(ContributedbyJelleZijlstrain gh-109118 andgh-118160 .)
+•Futurestatementsarenolongertriggeredbyrelativeimportsofthe __future__ module,meaningthatstate-
+ments of the form from .__future__ import ... are now simply standard relative imports, with no
+specialfeaturesactivated. (ContributedbyJeremiahGabrielPascualin gh-118216 .)
+•globaldeclarationsarenowpermittedin exceptblockswhenthatglobalisusedinthe elseblock. Previ-
+ouslythisraisedanerroneous SyntaxError . (ContributedbyIritKatrielin gh-111123 .)
+•AddPYTHON_FROZEN_MODULES ,anewenvironmentvariablethatdetermineswhetherfrozenmodulesareig-
+noredbytheimportmachinery,equivalenttothe -X frozen_modules command-lineoption. (Contributed
+byYileiYangin gh-111374 .)
+•Add support for the perf profiler working without frame pointers through the new environment variable
+PYTHON_PERF_JIT_SUPPORT and command-line option -X perf_jit . (Contributed by Pablo Galindo
+ingh-118518 .)
+•Thelocationofa .python_history filecanbechangedviathenew PYTHON_HISTORY environmentvari-
+able. (ContributedbyLeviSabah,ZackerySpytzandHugovanKemenadein gh-73965.)
+•Classeshaveanew __static_attributes__ attribute. Thisispopulatedbythecompilerwithatupleofthe
+class’sattributenameswhichareassignedthrough self.<name> fromanyfunctioninitsbody. (Contributed
+byIritKatrielin gh-115775 .)
+•Thecompilernowcreatesa __firstlineno__ attributeonclasseswiththelinenumberofthefirstlineof
+theclassdefinition. (ContributedbySerhiyStorchakain gh-118465 .)
+•Theexec()andeval()builtinsnowacceptthe globalsandlocalsargumentsaskeywords. (Contributedby
+RaphaelGaschignardin gh-105879 )
+•Thecompile() builtin now accepts a new flag, ast.PyCF_OPTIMIZED_AST , which is similar to ast.
+PyCF_ONLY_AST exceptthatthereturnedASTisoptimizedaccordingtothevalueofthe optimizeargument.
+(ContributedbyIritKatrielin gh-108113 ).
+•Adda __name__ attributeon property objects. (ContributedbyEugeneToderin gh-101860 .)
+•AddPythonFinalizationError ,anewexceptionderivedfrom RuntimeError andusedtosignalwhen
+operationsareblockedduringfinalization. Thefollowingcallablesnowraise PythonFinalizationError ,
+insteadof RuntimeError :
+–_thread.start_new_thread()
+–os.fork()
+–os.forkpty()
+–subprocess.Popen
+(ContributedbyVictorStinnerin gh-114570 .)
+•Allow the countargument of str.replace() to be a keyword. (Contributed by Hugo van Kemenade in
+gh-106487 .)
+•Manyfunctionsnowemitawarningifabooleanvalueispassedasafiledescriptorargument. Thiscanhelp
+catchsomeerrorsearlier. (ContributedbySerhiyStorchakain gh-82626.)
+•Added nameandmodeattributesforcompressedandarchivedfile-likeobjectsinthe bz2,lzma,tarfile,
+andzipfilemodules. (ContributedbySerhiyStorchakain gh-115961 .)
+9
+4New Modules
+•dbm.sqlite3 : AnSQLitebackendfor dbm. (ContributedbyRaymondHettingerandErlendE.Aaslandin
+gh-100414 .)
+5Improved Modules
+5.1argparse
+•Addthe deprecated parametertothe add_argument() andadd_parser() methods,toenabledeprecating
+command-line options, positional arguments, and subcommands. (Contributed by Serhiy Storchaka in gh-
+83648.)
+5.2array
+•Add the 'w'type code ( Py_UCS4) for Unicode characters. It should be used instead of the deprecated 'u'
+typecode. (ContributedbyInadaNaokiin gh-80480.)
+•Register array.array as aMutableSequence by implementing the clear()method. (Contributed by
+MikeZiminin gh-114894 .)
+5.3ast
+•The constructors of node types in the astmodule are now stricter in the arguments they accept, with more
+intuitivebehaviorwhenargumentsareomitted.
+If an optional field on an AST node is not included as an argument when constructing an instance, the field
+will now be set to None. Similarly, if a list field is omitted, that field will now be set to an empty list, and
+ifan expr_context fieldisomitted,itdefaultsto Load(). (Previously,inallcases,theattributewouldbe
+missingonthenewlyconstructedASTnodeinstance.)
+In all other cases, where a required argument is omitted, the node constructor will emit a
+DeprecationWarning . This will raise an exception in Python 3.15. Similarly, passing a keyword argu-
+ment to the constructor that does not map to a field on the AST node is now deprecated, and will raise an
+exceptioninPython3.15.
+Thesechangesdonotapplytouser-definedsubclassesof ast.ASTunlesstheclassoptsintothenewbehavior
+bydefiningthe AST._field_types mapping.
+(ContributedbyJelleZijlstrain gh-105858 ,gh-117486 ,andgh-118851 .)
+•ast.parse() nowacceptsanoptionalargument optimizewhichispassedonto compile() . Thismakesit
+possibletoobtainanoptimizedAST.(ContributedbyIritKatrielin gh-108113 .)
+5.4asyncio
+•asyncio.as_completed() nowreturnsanobjectthatisbothanasynchronousiteratorandaplainiterator
+of awaitables. The awaitables yielded by asynchronous iteration include original task or future objects that
+were passed in, making it easier to associate results with the tasks being completed. (Contributed by Justin
+Arthuringh-77714.)
+•asyncio.loop.create_unix_server() willnowautomaticallyremovetheUnixsocketwhentheserver
+isclosed. (ContributedbyPierreOssmanin gh-111246 .)
+•DatagramTransport.sendto() will now send zero-length datagrams if called with an empty bytes ob-
+ject. The transport flow control also now accounts for the datagram header when calculating the buffer size.
+(ContributedbyJamiePhanin gh-115199 .)
+•AddQueue.shutdown andQueueShutDown tomanagequeuetermination. (ContributedbyLaurieOpper-
+manandYvesDupratin gh-104228 .)
+•Add the Server.close_clients() andServer.abort_clients() methods, which more forcefully
+closeanasyncioserver. (ContributedbyPierreOssmanin gh-113538 .)
+10
+•Accept a tuple of separators in StreamReader.readuntil() , stopping when any one of them is encoun-
+tered. (ContributedbyBruceMerryin gh-81322.)
+•Improvethebehaviorof TaskGroup whenanexternalcancellationcollideswithaninternalcancellation. For
+example,whentwotaskgroupsarenestedandbothexperienceanexceptioninachildtasksimultaneously,it
+waspossiblethattheoutertaskgroupwouldhang,becauseitsinternalcancellationwasswallowedbytheinner
+taskgroup.
+Inthecasewhereataskgroupiscancelledexternallyandalsomustraisean ExceptionGroup ,itwillnowcall
+theparenttask’s cancel() method. Thisensuresthata CancelledError willberaisedatthenext await,
+sothecancellationisnotlost.
+Anaddedbenefitofthesechangesisthattaskgroupsnowpreservethecancellationcount( cancelling() ).
+In order to handle some corner cases, uncancel() may now reset the undocumented _must_cancel flag
+whenthecancellationcountreacheszero.
+(InspiredbyanissuereportedbyArthurTaccain gh-116720 .)
+•When TaskGroup.create_task() iscalledonaninactive TaskGroup ,thegivencoroutinewillbeclosed
+(whichpreventsa RuntimeWarning aboutthegivencoroutinebeingneverawaited). (ContributedbyArthur
+TaccaandJasonZhangin gh-115957 .)
+5.5base64
+•Addz85encode() andz85decode() functionsforencoding bytesasZ85dataanddecodingZ85-encoded
+datato bytes. (ContributedbyMatanPerelmanin gh-75299.)
+5.6compileall
+•Thedefaultnumberofworkerthreadsandprocessesisnowselectedusing os.process_cpu_count() in-
+steadof os.cpu_count() . (ContributedbyVictorStinnerin gh-109649 .)
+5.7concurrent.futures
+•Thedefaultnumberofworkerthreadsandprocessesisnowselectedusing os.process_cpu_count() in-
+steadof os.cpu_count() . (ContributedbyVictorStinnerin gh-109649 .)
+5.8configparser
+•ConfigParser nowhassupportforunnamedsections,whichallowsfortop-levelkey-valuepairs. Thiscanbe
+enabledwiththenew allow_unnamed_section parameter. (ContributedbyPedroSousaLacerdain gh-66449.)
+5.9copy
+•Thenew replace() functionandthe replace protocol makecreatingmodifiedcopiesofobjectsmuch
+simpler. This is especially useful when working with immutable objects. The following types support the
+replace() functionandimplementthereplaceprotocol:
+–collections.namedtuple()
+–dataclasses.dataclass
+–datetime.datetime ,datetime.date ,datetime.time
+–inspect.Signature ,inspect.Parameter
+–types.SimpleNamespace
+–codeobjects
+Anyuser-definedclasscanalsosupport copy.replace() bydefiningthe __replace__() method. (Con-
+tributedbySerhiyStorchakain gh-108751 .)
+11
+5.10ctypes
+•As a consequence of necessary internal refactoring, initialization of internal metaclasses now happens in
+__init__ rather than in __new__. This affects projects that subclass these internal metaclasses to provide
+custominitialization. Generally:
+–Custom logic that was done in __new__ after calling super().__new__ should be moved to
+__init__ .
+–Tocreateaclass,callthemetaclass,notonlythemetaclass’s __new__method.
+Seegh-124520 fordiscussionandlinkstochangesinsomeaffectedprojects.
+•ctypes.Structure objectshaveanew _align_attributewhichallowsthealignmentofthestructurebeing
+packedto/frommemorytobespecifiedexplicitly. (ContributedbyMattSandersonin gh-112433 )
+5.11dbm
+•Adddbm.sqlite3 ,anewmodulewhichimplementsanSQLitebackend,andmakeitthedefault dbmback-
+end. (ContributedbyRaymondHettingerandErlendE.Aaslandin gh-100414 .)
+•Allowremovingallitemsfromthedatabasethroughthenew gdbm.clear() andndbm.clear() methods.
+(ContributedbyDongheeNain gh-107122 .)
+5.12dis
+•Change the output of dismodule functions to show logical labels for jump targets and exception handlers,
+ratherthanoffsets. Theoffsetscanbeaddedwiththenew -Ocommand-lineoptionorthe show_offsets argu-
+ment. (ContributedbyIritKatrielin gh-112137 .)
+•get_instructions() nolongerrepresentscacheentriesasseparateinstructions. Instead,itreturnsthemas
+partofthe Instruction ,inthenew cache_info field. The show_caches argumentto get_instructions()
+isdeprecatedandnolongerhasanyeffect. (ContributedbyIritKatrielin gh-112962 .)
+5.13doctest
+•doctestoutputisnowcoloredbydefault. Thiscanbecontrolledviathenew PYTHON_COLORS environment
+variable as well as the canonical NO_COLOR andFORCE_COLOR environment variables. See also using-on-
+controlling-color. (ContributedbyHugovanKemenadein gh-117225 .)
+•TheDocTestRunner.run() methodnowcountsthenumberofskippedtests. Addthe DocTestRunner.
+skipsandTestResults.skipped attributes. (ContributedbyVictorStinnerin gh-108794 .)
+5.14email
+•Headers with embedded newlines are now quoted on output. The generator will now refuse to serialize
+(write) headers that are improperly folded or delimited, such that they would be parsed as multiple headers
+orjoinedwithadjacentdata. Ifyouneedtoturnthissafetyfeatureoff,set verify_generated_headers .
+(ContributedbyBasBloemsaatandPetrViktorinin gh-121650 .)
+•getaddresses() andparseaddr() now return ('', '') pairs in more situations where invalid email
+addresses are encountered instead of potentially inaccurate values. The two functions have a new optional
+strictparameter (default True). To get the old behavior (accepting malformed input), use strict=False .
+getattr(email.utils, 'supports_strict_parsing', False) can be used to check if the strict
+parameterisavailable. (ContributedbyThomasDwyerandVictorStinnerfor gh-102988 toimprovethe CVE
+2023-27043 fix.)
+5.15fractions
+•Fraction objectsnowsupportthestandardformatspecificationmini-languagerulesforfill,alignment,sign
+handling,minimumwidth,andgrouping. (ContributedbyMarkDickinsonin gh-111320 .)
+12
+5.16glob
+•Addtranslate() ,afunctiontoconvertapathspecificationwithshell-stylewildcardstoaregularexpression.
+(ContributedbyBarneyGalein gh-72904.)
+5.17importlib
+•The following functions in importlib.resources now allow accessing a directory (or tree) of resources,
+usingmultiplepositionalarguments(the encodinganderrorsargumentsinthetext-readingfunctionsarenow
+keyword-only):
+–is_resource()
+–open_binary()
+–open_text()
+–path()
+–read_binary()
+–read_text()
+Thesefunctionsarenolongerdeprecatedandarenotscheduledforremoval. (ContributedbyPetrViktorinin
+gh-116608 .)
+•contents() remainsdeprecatedinfavorofthefully-featured Traversable API.However,thereisnowno
+plantoremoveit. (ContributedbyPetrViktorinin gh-116608 .)
+5.18io
+•TheIOBasefinalizernowlogsanyerrorsraisedbythe close()methodwith sys.unraisablehook . Pre-
+viously,errorswereignoredsilentlybydefault,andonlyloggedinPythonDevelopmentModeorwhenusing
+aPythondebugbuild. (ContributedbyVictorStinnerin gh-62948.)
+5.19ipaddress
+•Addthe IPv4Address.ipv6_mapped property,whichreturnstheIPv4-mappedIPv6address. (Contributed
+byCharlesMachalowin gh-109466 .)
+•Fixis_global andis_private behavior in IPv4Address ,IPv6Address ,IPv4Network , and
+IPv6Network . (ContributedbyJakubStasiakin gh-113171 .)
+5.20itertools
+•batched() has a new strictparameter, which raises a ValueError if the final batch is shorter than the
+specifiedbatchsize. (ContributedbyRaymondHettingerin gh-113202 .)
+5.21marshal
+•Addthe allow_code parameterinmodulefunctions. Passing allow_code=False preventsserializationand
+de-serialization of code objects which are incompatible between Python versions. (Contributed by Serhiy
+Storchakain gh-113626 .)
+5.22math
+•The new function fma()performs fused multiply-add operations. This computes x * y + z with only a
+singleround,andsoavoidsanyintermediatelossofprecision. Itwrapsthe fma()functionprovidedbyC99,
+and follows the specification of the IEEE 754 “fusedMultiplyAdd” operation for special cases. (Contributed
+byMarkDickinsonandVictorStinnerin gh-73468.)
+13
+5.23mimetypes
+•Add the guess_file_type() function to guess a MIME type from a filesystem path. Using paths with
+guess_type() isnowsoftdeprecated. (ContributedbySerhiyStorchakain gh-66543.)
+5.24mmap
+•mmapisnowprotectedfromcrashingonWindowswhenthemappedmemoryisinaccessibleduetofilesystem
+errorsoraccessviolations. (ContributedbyJannisWeigendin gh-118209 .)
+•mmaphas a new seekable() method that can be used when a seekable file-like object is required. The
+seek()methodnowreturnsthenewabsoluteposition. (ContributedbyDongheeNaandSylvieLibermanin
+gh-111835 .)
+•ThenewUNIX-only trackfdparameterfor mmapcontrolsfiledescriptorduplication;iffalse,thefiledescriptor
+specifiedby filenowillnotbeduplicated. (ContributedbyZackerySpytzandPetrViktorinin gh-78502.)
+5.25multiprocessing
+•Thedefaultnumberofworkerthreadsandprocessesisnowselectedusing os.process_cpu_count() in-
+steadof os.cpu_count() . (ContributedbyVictorStinnerin gh-109649 .)
+5.26os
+•Addprocess_cpu_count() functionto getthenumberoflogicalCPUcoresusablebythecallingthread
+ofthecurrentprocess. (ContributedbyVictorStinnerin gh-109649 .)
+•cpu_count() andprocess_cpu_count() can be overridden through the new environment variable
+PYTHON_CPU_COUNT orthenewcommand-lineoption -X cpu_count . Thisoptionisusefulforuserswho
+needtolimitCPUresourcesofacontainersystemwithouthavingtomodifyapplicationcodeorthecontainer
+itself. (ContributedbyDongheeNain gh-109595 .)
+•Add a low level interface to Linux’s timer file descriptors via timerfd_create() ,
+timerfd_settime() ,timerfd_settime_ns() ,timerfd_gettime() ,timerfd_gettime_ns() ,
+TFD_NONBLOCK ,TFD_CLOEXEC ,TFD_TIMER_ABSTIME , and TFD_TIMER_CANCEL_ON_SET (Contributed
+byMasaruTsuchiyamain gh-108277 .)
+•lchmod() andthe follow_symlinks argumentof chmod()arebothnowavailableonWindows. Notethatthe
+default value of follow_symlinks inlchmod() isFalseon Windows. (Contributed by Serhiy Storchaka in
+gh-59616.)
+•fchmod() andsupportforfiledescriptorsin chmod()arebothnowavailableonWindows. (Contributedby
+SerhiyStorchakain gh-113191 .)
+•OnWindows, mkdir()andmakedirs() nowsupportpassinga modevalueof 0o700toapplyaccesscontrol
+tothenewdirectory. Thisimplicitlyaffects tempfile.mkdtemp() andisamitigationfor CVE 2024-4030 .
+Othervaluesfor modecontinuetobeignored. (ContributedbySteveDowerin gh-118486 .)
+•posix_spawn() now accepts Nonefor the envargument, which makes the newly spawned process use the
+currentprocessenvironment. (ContributedbyJakubKulikin gh-113119 .)
+•posix_spawn() cannowusethe POSIX_SPAWN_CLOSEFROM attributeinthe file_actions parameteronplat-
+formsthatsupport posix_spawn_file_actions_addclosefrom_np() . (ContributedbyJakubKulikin
+gh-113117 .)
+5.27os.path
+•Addisreserved() tocheckifapathisreservedonthecurrentsystem. Thisfunctionisonlyavailableon
+Windows. (ContributedbyBarneyGalein gh-88569.)
+•On Windows, isabs()no longer considers paths starting with exactly one slash ( \or/) to be absolute.
+(ContributedbyBarneyGaleandJonFosterin gh-44626.)
+14
+•realpath() nowresolvesMS-DOSstylefilenamesevenifthefileisnotaccessible. (ContributedbyMoonsik
+Parkingh-82367.)
+5.28pathlib
+•AddUnsupportedOperation ,whichisraisedinsteadof NotImplementedError whenapathoperation
+isn’tsupported. (ContributedbyBarneyGalein gh-89812.)
+•Add a new constructor for creating Pathobjects from ‘file’ URIs ( file:/// ),Path.from_uri() . (Con-
+tributedbyBarneyGalein gh-107465 .)
+•AddPurePath.full_match() formatchingpathswithshell-stylewildcards,includingtherecursivewild-
+card“ **”. (ContributedbyBarneyGalein gh-73435.)
+•Addthe PurePath.parser classattributetostoretheimplementationof os.pathusedforlow-levelpath
+parsingandjoining. Thiswillbeeither posixpath orntpath.
+•Addrecurse_symlinks keyword-onlyargumentto Path.glob() andrglob(). (ContributedbyBarneyGale
+ingh-77609.)
+•Path.glob() andrglob()nowreturnfilesanddirectorieswhengivenapatternthatendswith“ **”. Pre-
+viously,onlydirectorieswerereturned. (ContributedbyBarneyGalein gh-70303.)
+•Add the follow_symlinks keyword-only argument to Path.is_file ,Path.is_dir ,Path.owner() , and
+Path.group() . (ContributedbyBarneyGalein gh-105793 andKamilTurekin gh-107962 .)
+5.29pdb
+•breakpoint() andset_trace() nowenterthedebuggerimmediatelyratherthanonthenextlineofcode
+tobeexecuted. Thischangepreventsthedebuggerfrombreakingoutsideofthecontextwhen breakpoint()
+ispositionedattheendofthecontext. (ContributedbyTianGaoin gh-118579 .)
+•sys.path[0] is no longer replaced by the directory of the script being debugged when sys.flags.
+safe_path isset. (ContributedbyTianGaoandChristianWaltherin gh-111762 .)
+•zipappisnowsupportedasadebuggingtarget. (ContributedbyTianGaoin gh-118501 .)
+•Add ability to move between chained exceptions during post-mortem debugging in pm()using the new
+exceptions [exc_number] commandforPdb. (ContributedbyMatthiasBussonnierin gh-106676 .)
+•Expressionsandstatementswhoseprefixisapdbcommandarenowcorrectlyidentifiedandexecuted. (Con-
+tributedbyTianGaoin gh-108464 .)
+5.30queue
+•AddQueue.shutdown andShutDown tomanagequeuetermination. (ContributedbyLaurieOppermanand
+YvesDupratin gh-104750 .)
+5.31random
+•Addacommand-lineinterface. (ContributedbyHugovanKemenadein gh-118131 .)
+5.32re
+•Rename re.error toPatternError forimprovedclarity. re.error iskeptforbackwardcompatibility.
+5.33shutil
+•Supportthe dir_fdandfollow_symlinks keywordargumentsin chown(). (ContributedbyBerkerPeksagand
+TahiaKin gh-62308)
+15
+5.34site
+•.pthfiles are now decoded using UTF-8 first, and then with the locale encoding if UTF-8 decoding fails.
+(ContributedbyInadaNaokiin gh-117802 .)
+5.35sqlite3
+•AResourceWarning is now emitted if a Connection object is not closedexplicitly. (Contributed by
+ErlendE.Aaslandin gh-105539 .)
+•Addthe filterkeyword-onlyparameterto Connection.iterdump() forfilteringdatabaseobjectstodump.
+(ContributedbyMariuszFelisiakin gh-91602.)
+5.36ssl
+•The create_default_context() API now includes VERIFY_X509_PARTIAL_CHAIN and
+VERIFY_X509_STRICT initsdefaultflags.
+®Note
+VERIFY_X509_STRICT mayrejectpre- RFC 5280 ormalformedcertificatesthattheunderlyingOpenSSL
+implementationmightotherwiseaccept. Whilstdisablingthisisnotrecommended,youcandosousing:
+import ssl
+ctx =ssl.create_default_context()
+ctx.verify_flags &=~ssl.VERIFY_X509_STRICT
+(ContributedbyWilliamWoodruffin gh-112389 .)
+5.37statistics
+•Addkde()forkerneldensityestimation. Thismakesitpossibletoestimateacontinuousprobabilitydensity
+functionfromafixednumberofdiscretesamples. (ContributedbyRaymondHettingerin gh-115863 .)
+•Addkde_random() for sampling from an estimated probability density function created by kde(). (Con-
+tributedbyRaymondHettingerin gh-115863 .)
+5.38subprocess
+•Thesubprocess modulenowusesthe posix_spawn() functioninmoresituations.
+Notably, when close_fdsisTrue(the default), posix_spawn() will be used when the C library provides
+posix_spawn_file_actions_addclosefrom_np() ,whichincludesrecentversionsofLinux,FreeBSD,
+andSolaris. OnLinux,thisshouldperformsimilarlytotheexistingLinux vfork()basedcode.
+A private control knob subprocess._USE_POSIX_SPAWN can be set to Falseif you need to force
+subprocess to never use posix_spawn() . Please report your reason and platform details in the issue
+tracker if you set this so that we can improve our API selection logic for everyone. (Contributed by Jakub
+Kulikingh-113117 .)
+5.39sys
+•Addthe _is_interned() functiontotestifastringwasinterned. Thisfunctionisnotguaranteedtoexist
+inallimplementationsofPython. (ContributedbySerhiyStorchakain gh-78573.)
+16
+5.40tempfile
+•OnWindows,thedefaultmode 0o700usedby tempfile.mkdtemp() nowlimitsaccesstothenewdirectory
+due to changes to os.mkdir() . This is a mitigation for CVE 2024-4030 . (Contributed by Steve Dower in
+gh-118486 .)
+5.41time
+•OnWindows, monotonic() nowusesthe QueryPerformanceCounter() clockforaresolutionof1mi-
+crosecond, instead of the GetTickCount64() clock which has a resolution of 15.6 milliseconds. (Con-
+tributedbyVictorStinnerin gh-88494.)
+•On Windows, time()now uses the GetSystemTimePreciseAsFileTime() clock for a resolution of 1
+microsecond,insteadofthe GetSystemTimeAsFileTime() clockwhichhasaresolutionof15.6millisec-
+onds. (ContributedbyVictorStinnerin gh-63207.)
+5.42tkinter
+•Add tkinter widget methods: tk_busy_hold() ,tk_busy_configure() ,tk_busy_cget() ,
+tk_busy_forget() ,tk_busy_current() , and tk_busy_status() . (Contributed by Miguel, klapp-
+naseandSerhiyStorchakain gh-72684.)
+•Thetkinterwidget method wm_attributes() now accepts the attribute name without the minus prefix
+to get window attributes, for example w.wm_attributes('alpha') and allows specifying attributes and
+valuestosetaskeywordarguments,forexample w.wm_attributes(alpha=0.5) . (ContributedbySerhiy
+Storchakain gh-43457.)
+•wm_attributes() cannowreturnattributesasa dict,byusingthenewoptionalkeyword-onlyparameter
+return_python_dict . (ContributedbySerhiyStorchakain gh-43457.)
+•Text.count() can now return a simple intwhen the new optional keyword-only parameter return_ints is
+used. Otherwise, the single count is returned as a 1-tuple or None. (Contributed by Serhiy Storchaka in
+gh-97928.)
+•Support the “vsapi” element type in the element_create() method of tkinter.ttk.Style . (Con-
+tributedbySerhiyStorchakain gh-68166.)
+•Addthe after_info() methodforTkinterwidgets. (ContributedbyCherylSabellain gh-77020.)
+•Addanew copy_replace() methodto PhotoImage tocopyaregionfromoneimagetoanother,possibly
+withpixelzooming,subsampling,orboth. (ContributedbySerhiyStorchakain gh-118225 .)
+•Addfrom_coords parametertothe PhotoImage methods copy(),zoom()andsubsample() . Add zoom
+andsubsample parameters to the PhotoImage method copy(). (Contributed by Serhiy Storchaka in gh-
+118225.)
+•Add the PhotoImage methods read()to read an image from a file and data()to get the image data.
+Addbackground andgrayscaleparameters to the write()method. (Contributed by Serhiy Storchaka in
+gh-118271 .)
+5.43traceback
+•Add the exc_type_str attribute to TracebackException , which holds a string display of the exc_type.
+Deprecatethe exc_type attribute,whichholdsthetypeobjectitself. Addparameter save_exc_type (default
+True)toindicatewhether exc_type shouldbesaved. (ContributedbyIritKatrielin gh-112332 .)
+•Addanew show_group keyword-onlyparameterto TracebackException.format_exception_only()
+to(recursively)formatthenestedexceptionsofa BaseExceptionGroup instance. (ContributedbyIritKa-
+trielingh-105292 .)
+17
+5.44types
+•SimpleNamespace cannowtakeasinglepositionalargumenttoinitialisethenamespace’sarguments. This
+argument must either be a mapping or an iterable of key-value pairs. (Contributed by Serhiy Storchaka in
+gh-108191 .)
+5.45typing
+•PEP 705: Add ReadOnly ,aspecialtypingconstructtomarka TypedDict itemasread-onlyfortypecheck-
+ers.
+•PEP 742: Add TypeIs,atypingconstructthatcanbeusedtoinstructatypecheckerhowtonarrowatype.
+•AddNoDefault ,asentinelobjectusedtorepresentthedefaultsofsomeparametersinthe typingmodule.
+(ContributedbyJelleZijlstrain gh-116126 .)
+•Addget_protocol_members() toreturnthesetofmembersdefininga typing.Protocol . (Contributed
+byJelleZijlstrain gh-104873 .)
+•Addis_protocol() tocheckwhetheraclassisa Protocol . (ContributedbyJelleZijlstrain gh-104873 .)
+•ClassVar cannowbenestedin Final,andviceversa. (ContributedbyMehdiDrissiin gh-89547.)
+5.46unicodedata
+•UpdatetheUnicodedatabaseto version15.1.0 . (ContributedbyJamesGerityin gh-109559 .)
+5.47venv
+•Addsupportforcreatingsourcecontrolmanagement(SCM)ignorefilesinavirtualenvironment’sdirectory. By
+default,Gitissupported. Thisisimplementedasopt-inviatheAPI,whichcanbeextendedtosupportother
+SCMs ( EnvBuilder andcreate() ), and opt-out via the CLI, using --without-scm-ignore-files .
+(ContributedbyBrettCannonin gh-108125 .)
+5.48warnings
+•PEP 702: The new warnings.deprecated() decorator provides a way to communicate deprecations to
+a static type checker and to warn on usage of deprecated classes and functions. A DeprecationWarning
+may also be emitted when a decorated function or class is used at runtime. (Contributed by Jelle Zijlstra in
+gh-104003 .)
+5.49xml
+•AllowcontrollingExpat>=2.6.0reparsedeferral( CVE 2023-52425 )byaddingfivenewmethods:
+–xml.etree.ElementTree.XMLParser.flush()
+–xml.etree.ElementTree.XMLPullParser.flush()
+–xml.parsers.expat.xmlparser.GetReparseDeferralEnabled()
+–xml.parsers.expat.xmlparser.SetReparseDeferralEnabled()
+–xml.sax.expatreader.ExpatParser.flush()
+(ContributedbySebastianPippingin gh-115623 .)
+•Add the close()method for the iterator returned by iterparse() for explicit cleanup. (Contributed by
+SerhiyStorchakain gh-69893.)
+18
+5.50zipimport
+•Add support for ZIP64format files. Everybody loves huge data, right? (Contributed by Tim Hatch in gh-
+94146.)
+6Optimizations
+•Several standard library modules have had their import times significantly improved. For example, the im-
+port time of the typingmodule has been reduced by around a third by removing dependencies on reand
+contextlib . Other modules to enjoy import-time speedups include email.utils ,enum,functools ,
+importlib.metadata , and threading . (Contributed by Alex Waygood, Shantanu Jain, Adam Turner,
+DanielHollas,andothersin gh-109653 .)
+•textwrap.indent() isnowaround30%fasterthanbeforeforlargeinput. (ContributedbyInadaNaokiin
+gh-107369 .)
+•Thesubprocess module now uses the posix_spawn() function in more situations, including when
+close_fdsisTrue(thedefault)onmanymodernplatforms. Thisshouldprovideanotableperformanceincrease
+whenlaunchingprocessesonFreeBSDandSolaris. Seethe subprocess sectionabovefordetails. (Contributed
+byJakubKulikin gh-113117 .)
+7Removed Modules And APIs
+7.1PEP 594: Remove “dead batteries” from the standard library
+PEP 594proposed removing 19 modules from the standard library, colloquially referred to as ‘dead batteries’ due
+totheirhistoric,obsolete,orinsecurestatus. AllofthefollowingmodulesweredeprecatedinPython3.11,andare
+nowremoved:
+•aifc
+•audioop
+•chunk
+•cgiandcgitb
+–cgi.FieldStorage cantypicallybereplacedwith urllib.parse.parse_qsl() forGETandHEAD
+requests,andthe email.message moduleorthe multipartlibraryfor POSTandPUTrequests.
+–cgi.parse() canbereplacedbycalling urllib.parse.parse_qs() directlyonthedesiredquery
+string, unless the input is multipart/form-data , which should be replaced as described below for
+cgi.parse_multipart() .
+–cgi.parse_header() canbereplacedwiththefunctionalityinthe emailpackage,whichimplements
+thesameMIMERFCs. Forexample,with email.message.EmailMessage :
+from email .message import EmailMessage
+msg =EmailMessage()
+msg[ 'content-type ']='application/json; charset= "utf8 "'
+main, params =msg.get_content_type(), msg[ 'content-type '].params
+–cgi.parse_multipart() can be replaced with the functionality in the emailpackage, which im-
+plements the same MIME RFCs, or with the multipartlibrary. For example, the email.message.
+EmailMessage andemail.message.Message classes.
+•cryptand the private _cryptextension. The hashlibmodule may be an appropriate replacement when
+simplyhashingavalueisrequired. Otherwise,variousthird-partylibrariesonPyPIareavailable:
+–bcrypt: Modernpasswordhashingforyoursoftwareandyourservers.
+–passlib: Comprehensivepasswordhashingframeworksupportingover30schemes.
+19
+–argon2-cffi : ThesecureArgon2passwordhashingalgorithm.
+–legacycrypt :ctypeswrappertothePOSIXcryptlibrarycallandassociatedfunctionality.
+–crypt_r: Forkofthe cryptmodule, wrappertothe crypt_r(3) librarycallandassociatedfunction-
+ality.
+•imghdr: Thefiletype,puremagic,orpython-magic librariesshouldbeusedasreplacements. Forexample,the
+puremagic.what() function can be used to replace the imghdr.what() function for all file formats that
+weresupportedby imghdr.
+•mailcap: Usethe mimetypes moduleinstead.
+•msilib
+•nis
+•nntplib: UsethepynntplibraryfromPyPIinstead.
+•ossaudiodev : Foraudioplayback,usethe pygamelibraryfromPyPIinstead.
+•pipes: Usethe subprocess moduleinstead. Use shlex.quote() toreplacetheundocumented pipes.
+quotefunction.
+•sndhdr: Thefiletype,puremagic,orpython-magic librariesshouldbeusedasreplacements.
+•spwd: Usethepython-pam libraryfromPyPIinstead.
+•sunau
+•telnetlib ,Usethetelnetlib3orExscriptlibrariesfromPyPIinstead.
+•uu: Usethe base64moduleinstead,asamodernalternative.
+•xdrlib
+(ContributedbyVictorStinnerandZacharyWarein gh-104773 andgh-104780 .)
+7.22to3
+•Removethe 2to3programandthe lib2to3module,previouslydeprecatedinPython3.11. (Contributedby
+VictorStinnerin gh-104780 .)
+7.3builtins
+•Remove support for chained classmethod descriptors (introduced in gh-63272). These can no longer be
+used to wrap other descriptors, such as property . The core design of this feature was flawed and led to
+several problems. To “pass-through” a classmethod , consider using the __wrapped__ attribute that was
+addedinPython3.10. (ContributedbyRaymondHettingerin gh-89519.)
+•Raise a RuntimeError when calling frame.clear() on a suspended frame (as has always been the case
+foranexecutingframe). (ContributedbyIritKatrielin gh-79932.)
+7.4configparser
+•Removetheundocumented LegacyInterpolation class,deprecatedinthedocstringsincePython3.2,and
+atruntimesincePython3.11. (ContributedbyHugovanKemenadein gh-104886 .)
+7.5importlib.metadata
+•Remove deprecated subscript ( __getitem__() ) access for EntryPoint objects. (Contributed by Jason R.
+Coombsin gh-113175 .)
+20
+7.6locale
+•Remove the locale.resetlocale() function, deprecated in Python 3.11. Use locale.
+setlocale(locale.LC_ALL, "") instead. (ContributedbyVictorStinnerin gh-104783 .)
+7.7opcode
+•Move opcode.ENABLE_SPECIALIZATION to_opcode.ENABLE_SPECIALIZATION .Thisfieldwasadded
+in 3.12, it was never documented, and is not intended for external use. (Contributed by Irit Katriel in gh-
+105481.)
+•Remove opcode.is_pseudo() ,opcode.MIN_PSEUDO_OPCODE , and opcode.MAX_PSEUDO_OPCODE ,
+which were added in Python 3.12, but were neither documented nor exposed through dis, and were not
+intendedtobeusedexternally. (ContributedbyIritKatrielin gh-105481 .)
+7.8pathlib
+•Remove the abilityto use Pathobjectsas contextmanagers. Thisfunctionality was deprecatedand has had
+noeffectsincePython3.9. (ContributedbyBarneyGalein gh-83863.)
+7.9re
+•Remove the undocumented, deprecated, and broken re.template() function and re.TEMPLATE /re.T
+flag. (ContributedbySerhiyStorchakaandNikitaSobolevin gh-105687 .)
+7.10tkinter.tix
+•Removethe tkinter.tix module,deprecatedinPython3.6. Thethird-partyTixlibrarywhichthemodule
+wrappedisunmaintained. (ContributedbyZacharyWarein gh-75552.)
+7.11turtle
+•Removethe RawTurtle.settiltangle() method,deprecatedinthedocumentationsincePython3.1and
+atruntimesincePython3.11. (ContributedbyHugovanKemenadein gh-104876 .)
+7.12typing
+•Remove the typing.io andtyping.re namespaces, deprecated since Python 3.8. The items in those
+namespaces can be imported directly from the typingmodule. (Contributed by Sebastian Rittau in gh-
+92871.)
+•Remove the keyword-argument method of creating TypedDict types, deprecated in Python 3.11. (Con-
+tributedbyTomasRounin gh-104786 .)
+7.13unittest
+•Removethefollowing unittest functions,deprecatedinPython3.11:
+–unittest.findTestCases()
+–unittest.makeSuite()
+–unittest.getTestCaseNames()
+UseTestLoader methodsinstead:
+–loadTestsFromModule()
+–loadTestsFromTestCase()
+–getTestCaseNames()
+(ContributedbyHugovanKemenadein gh-104835 .)
+21
+•Removetheuntestedandundocumented TestProgram.usageExit() method,deprecatedinPython3.11.
+(ContributedbyHugovanKemenadein gh-104992 .)
+7.14urllib
+•Remove the cafile,capath, and cadefaultparameters of the urllib.request.urlopen() function,
+deprecated in Python 3.6. Use the contextparameter instead with an SSLContext instance. The
+ssl.SSLContext.load_cert_chain() function can be used to load specific certificates, or let ssl.
+create_default_context() select the operating system’s trusted certificate authority (CA) certificates.
+(ContributedbyVictorStinnerin gh-105382 .)
+7.15webbrowser
+•Remove the untested and undocumented MacOSXclass, deprecated in Python 3.11. Use the
+MacOSXOSAScript class (introduced in Python 3.2) instead. (Contributed by Hugo van Kemenade in gh-
+104804.)
+•Removethedeprecated MacOSXOSAScript._name attribute. Usethe MacOSXOSAScript.name attribute
+instead. (ContributedbyNikitaSobolevin gh-105546 .)
+8New Deprecations
+•User-definedfunctions:
+–Deprecate assignment to a function’s __code__ attribute, where the new code object’s type does not
+matchthefunction’stype. Thedifferenttypesare: plainfunction,generator,asyncgenerator,andcorou-
+tine. (ContributedbyIritKatrielin gh-81137.)
+•array:
+–Deprecatethe 'u'formatcode( wchar_t)atruntime. Thisformatcodehasbeendeprecatedindocu-
+mentationsincePython3.3,andwillberemovedinPython3.16. Usethe 'w'formatcode( Py_UCS4)
+forUnicodecharactersinstead. (ContributedbyHugovanKemenadein gh-80480.)
+•ctypes:
+–Deprecate the undocumented SetPointerType() function, to be removed in Python 3.15. (Con-
+tributedbyVictorStinnerin gh-105733 .)
+–Soft-deprecate the ARRAY()function in favour of type * length multiplication. (Contributed by
+VictorStinnerin gh-105733 .)
+•decimal:
+–Deprecatethenon-standardandundocumented Decimalformatspecifier 'N',whichisonlysupported
+inthe decimalmodule’sCimplementation. (ContributedbySerhiyStorchakain gh-89902.)
+•dis:
+–Deprecatethe HAVE_ARGUMENT separator. Checkmembershipin hasarginstead. (ContributedbyIrit
+Katrielingh-109319 .)
+•getoptandoptparse :
+–Bothmodulesarenowsoftdeprecated, with argparse preferredfornewprojects. Thisisanewsoft-
+deprecationforthe getoptmodule,whereasthe optparse modulewasalready de factosoftdeprecated.
+(ContributedbyVictorStinnerin gh-106535 .)
+•gettext:
+–Deprecatenon-integernumbersasargumentstofunctionsandmethodsthatconsiderpluralformsinthe
+gettextmodule,evenifnotranslationwasfound. (ContributedbySerhiyStorchakain gh-88434.)
+•glob:
+22
+–Deprecatetheundocumented glob0()andglob1()functions. Use glob()andpassapath-likeobject
+specifying the root directory to the root_dirparameter instead. (Contributed by Barney Gale in gh-
+117337.)
+•http.server :
+–Deprecate CGIHTTPRequestHandler , to be removed in Python 3.15. Process-based CGI HTTP
+servers have been out of favor for a very long time. This code was outdated, unmaintained, and rarely
+used. Ithasahighpotentialforbothsecurityandfunctionalitybugs. (ContributedbyGregoryP.Smith
+ingh-109096 .)
+–Deprecatethe --cgiflagtothe python -m http.server command-lineinterface,toberemovedin
+Python3.15. (ContributedbyGregoryP.Smithin gh-109096 .)
+•mimetypes :
+–Soft-deprecatefilepathargumentsto guess_type() ,useguess_file_type() instead. (Contributed
+bySerhiyStorchakain gh-66543.)
+•re:
+–Deprecatepassingtheoptional maxsplit,count,orflagsargumentsaspositionalargumentstothemodule-
+level split(),sub(),and subn()functions. Theseparameterswillbecomekeyword-onlyinafuture
+versionofPython. (ContributedbySerhiyStorchakain gh-56166.)
+•pathlib:
+–Deprecate PurePath.is_reserved() , to be removed in Python 3.15. Use os.path.
+isreserved() todetectreservedpathsonWindows. (ContributedbyBarneyGalein gh-88569.)
+•platform :
+–Deprecate java_ver() ,toberemovedinPython3.15. ThisfunctionisonlyusefulforJythonsupport,
+hasaconfusingAPI,andislargelyuntested. (ContributedbyNikitaSobolevin gh-116349 .)
+•pydoc:
+–Deprecatetheundocumented ispackage() function. (ContributedbyZackerySpytzin gh-64020.)
+•sqlite3:
+–Deprecatepassingmorethanonepositionalargumenttothe connect() functionandthe Connection
+constructor. The remaining parameters will become keyword-only in Python 3.15. (Contributed by
+ErlendE.Aaslandin gh-107948 .)
+–Deprecate passing name, number of arguments, and the callable as keyword arguments for
+Connection.create_function() andConnection.create_aggregate() These parameters
+willbecomepositional-onlyinPython3.15. (ContributedbyErlendE.Aaslandin gh-108278 .)
+–Deprecate passing the callback callable by keyword for the set_authorizer() ,
+set_progress_handler() , and set_trace_callback() Connection methods. The call-
+back callables will become positional-only in Python 3.15. (Contributed by Erlend E. Aasland in
+gh-108278 .)
+•sys:
+–Deprecatethe _enablelegacywindowsfsencoding() function,toberemovedinPython3.16. Use
+thePYTHONLEGACYWINDOWSFSENCODING environmentvariableinstead. (ContributedbyInadaNaoki
+ingh-73427.)
+•tarfile:
+–Deprecatetheundocumentedandunused TarFile.tarfile attribute,toberemovedinPython3.16.
+(Contributedin gh-115256 .)
+•traceback :
+–Deprecate the TracebackException.exc_type attribute. Use TracebackException.
+exc_type_str instead. (ContributedbyIritKatrielin gh-112332 .)
+23
+•typing:
+–Deprecatethe undocumented keyword argument syntax for creating NamedTuple classes(e.g. Point
+= NamedTuple("Point", x=int, y=int) ), to be removed in Python 3.15. Use the class-based
+syntaxorthefunctionalsyntaxinstead. (ContributedbyAlexWaygoodin gh-105566 .)
+–Deprecate omitting the fieldsparameter when creating a NamedTuple ortyping.TypedDict class,
+and deprecate passing Noneto the fieldsparameter of both types. Python 3.15 will require a
+valid sequence for the fieldsparameter. To create a NamedTuple class with zero fields, use class
+NT(NamedTuple): pass orNT = NamedTuple("NT", ()) . TocreateaTypedDictclasswithzero
+fields,use class TD(TypedDict): pass orTD = TypedDict("TD", {}) . (ContributedbyAlex
+Waygoodin gh-105566 andgh-105570 .)
+–Deprecate the typing.no_type_check_decorator() decorator function, to be removed in in
+Python 3.15. After eight years in the typingmodule, it has yet to be supported by any major type
+checker. (ContributedbyAlexWaygoodin gh-106309 .)
+–Deprecate typing.AnyStr . In Python 3.16, it will be removed from typing.__all__ , and a
+DeprecationWarning willbeemittedatruntimewhenitisimportedoraccessed. Itwillberemoved
+entirely in Python 3.18. Use the new type parameter syntax instead. (Contributed by Michael The in
+gh-107116 .)
+•wave:
+–Deprecate the getmark() ,setmark() , and getmarkers() methods of the Wave_read and
+Wave_write classes,toberemovedinPython3.15. (ContributedbyVictorStinnerin gh-105096 .)
+8.1Pending Removal in Python 3.14
+•argparse : The type,choices,andmetavarparametersof argparse.BooleanOptionalAction aredep-
+recatedandwillberemovedin3.14. (ContributedbyNikitaSobolevin gh-92248.)
+•ast: The following features have been deprecated in documentation since Python 3.8, now cause a
+DeprecationWarning to be emitted at runtime when they are accessed or used, and will be removed in
+Python3.14:
+–ast.Num
+–ast.Str
+–ast.Bytes
+–ast.NameConstant
+–ast.Ellipsis
+Useast.Constant instead. (ContributedbySerhiyStorchakain gh-90953.)
+•asyncio:
+–The child watcher classes MultiLoopChildWatcher , FastChildWatcher ,
+AbstractChildWatcher and SafeChildWatcher are deprecated and will be removed in
+Python3.14. (ContributedbyKumarAdityain gh-94597.)
+–asyncio.set_child_watcher() , asyncio.get_child_watcher() ,
+asyncio.AbstractEventLoopPolicy.set_child_watcher() and asyncio.
+AbstractEventLoopPolicy.get_child_watcher() are deprecated and will be removed in
+Python3.14. (ContributedbyKumarAdityain gh-94597.)
+–Theget_event_loop() methodofthedefaulteventlooppolicynowemitsa DeprecationWarning
+ifthereisnocurrenteventloopsetanditdecidestocreateone. (ContributedbySerhiyStorchakaand
+GuidovanRossumin gh-100160 .)
+•collections.abc : Deprecated ByteString . Prefer Sequence orBuffer. For use in typing, prefer a
+union, like bytes | bytearray , orcollections.abc.Buffer . (Contributed by Shantanu Jain in gh-
+91896.)
+24
+•email: Deprecatedthe isdstparameterin email.utils.localtime() . (ContributedbyAlanWilliamsin
+gh-72346.)
+•importlib.abc deprecatedclasses:
+–importlib.abc.ResourceReader
+–importlib.abc.Traversable
+–importlib.abc.TraversableResources
+Useimportlib.resources.abc classesinstead:
+–importlib.resources.abc.Traversable
+–importlib.resources.abc.TraversableResources
+(ContributedbyJasonR.CoombsandHugovanKemenadein gh-93963.)
+•itertools had undocumented, inefficient, historically buggy, and inconsistent support for copy, deepcopy,
+andpickleoperations. Thiswillberemovedin3.14forasignificantreductionincodevolumeandmaintenance
+burden. (ContributedbyRaymondHettingerin gh-101588 .)
+•multiprocessing : The default start method will change to a safer one on Linux, BSDs, and other non-
+macOSPOSIXplatformswhere 'fork'iscurrentlythedefault( gh-84559). Addingaruntimewarningabout
+thiswasdeemedtoodisruptiveasthemajorityofcodeisnotexpectedtocare. Usethe get_context() or
+set_start_method() APIs to explicitly specify when your code requires 'fork'. See multiprocessing-
+start-methods.
+•pathlib:is_relative_to() andrelative_to() : passingadditionalargumentsisdeprecated.
+•pkgutil:find_loader() andget_loader() now raise DeprecationWarning ; use importlib.
+util.find_spec() instead. (ContributedbyNikitaSobolevin gh-97850.)
+•pty:
+–master_open() : use pty.openpty() .
+–slave_open() : use pty.openpty() .
+•sqlite3:
+–versionandversion_info .
+–execute() andexecutemany() ifnamedplaceholdersareusedand parameters isasequenceinstead
+ofadict.
+•typing:ByteString , deprecated since Python 3.9, now causes a DeprecationWarning to be emitted
+whenitisused.
+•urllib:urllib.parse.Quoter is deprecated: it was not intended to be a public API. (Contributed by
+GregoryP.Smithin gh-88168.)
+8.2Pending Removal in Python 3.15
+•Theimportsystem:
+–Setting __cached__ on a module while failing to set __spec__.cached is deprecated. In Python
+3.15, __cached__ will cease to be set or take into consideration by the import system or standard
+library. (gh-97879)
+–Setting __package__ on a module while failing to set __spec__.parent is deprecated. In Python
+3.15, __package__ will cease to be set or take into consideration by the import system or standard
+library. (gh-97879)
+•ctypes:
+–Theundocumented ctypes.SetPointerType() functionhasbeendeprecatedsincePython3.13.
+•http.server :
+25
+–The obsolete and rarely used CGIHTTPRequestHandler has been deprecated since Python 3.13. No
+directreplacementexists. AnythingisbetterthanCGItointerfaceawebserverwitharequesthandler.
+–The--cgiflagtothe python -m http.server command-lineinterfacehasbeendeprecatedsince
+Python3.13.
+•locale:
+–Thegetdefaultlocale() function has been deprecated since Python 3.11. Its removal was origi-
+nallyplannedforPython3.13( gh-90817),buthasbeenpostponedtoPython3.15. Use getlocale() ,
+setlocale() ,and getencoding() instead. (ContributedbyHugovanKemenadein gh-111187 .)
+•pathlib:
+–PurePath.is_reserved() hasbeendeprecatedsincePython3.13. Use os.path.isreserved()
+todetectreservedpathsonWindows.
+•platform :
+–java_ver() has been deprecated since Python 3.13. This function is only useful for Jython support,
+hasaconfusingAPI,andislargelyuntested.
+•threading :
+–RLock()will take no arguments in Python 3.15. Passing any arguments has been deprecated since
+Python3.14,asthePythonversiondoesnotpermitanyarguments,buttheCversionallowsanynumber
+ofpositionalorkeywordarguments,ignoringeveryargument.
+•types:
+–types.CodeType : Accessing co_lnotab wasdeprecatedin PEP 626since3.10andwasplannedto
+beremovedin3.12,butitonlygotaproper DeprecationWarning in3.12. Mayberemovedin3.15.
+(ContributedbyNikitaSobolevin gh-101866 .)
+•typing:
+–The undocumented keyword argument syntax for creating NamedTuple classes (e.g. Point =
+NamedTuple("Point", x=int, y=int) ) has been deprecated since Python 3.13. Use the class-
+basedsyntaxorthefunctionalsyntaxinstead.
+–Thetyping.no_type_check_decorator() decorator function has been deprecated since Python
+3.13. Aftereightyearsinthe typingmodule,ithasyettobesupportedbyanymajortypechecker.
+•wave:
+–Thegetmark() ,setmark() , and getmarkers() methods of the Wave_read andWave_write
+classeshavebeendeprecatedsincePython3.13.
+8.3Pending removal in Python 3.16
+•Theimportsystem:
+–Setting __loader__ on a module while failing to set __spec__.loader is deprecated. In Python
+3.16, __loader__ willceasetobesetortakenintoconsiderationbytheimportsystemorthestandard
+library.
+•array:
+–The'u'formatcode( wchar_t)hasbeendeprecatedindocumentationsincePython3.3andatruntime
+sincePython3.13. Usethe 'w'formatcode( Py_UCS4)forUnicodecharactersinstead.
+•asyncio:
+–asyncio.iscoroutinefunction() is deprecated and will be removed in Python 3.16, use
+inspect.iscoroutinefunction() instead. (Contributed by Jiahao Li and Kumar Aditya in gh-
+122875.)
+•builtins :
+26
+–Bitwise inversion on boolean types, ~Trueor~Falsehas been deprecated since Python 3.12, as it
+producessurprisingandunintuitiveresults( -2and-1). Use not xinsteadforthelogicalnegationofa
+Boolean. In the rare case that you need the bitwise inversion of the underlying integer, convert to int
+explicitly( ~int(x)).
+•shutil:
+–TheExecError exceptionhasbeendeprecatedsincePython3.14. Ithasnotbeenusedbyanyfunction
+inshutilsincePython3.4,andisnowanaliasof RuntimeError .
+•symtable :
+–TheClass.get_methods methodhasbeendeprecatedsincePython3.14.
+•sys:
+–The_enablelegacywindowsfsencoding() function has been deprecated since Python 3.13. Use
+thePYTHONLEGACYWINDOWSFSENCODING environmentvariableinstead.
+•tarfile:
+–Theundocumentedandunused TarFile.tarfile attributehasbeendeprecatedsincePython3.13.
+8.4Pending Removal in Future Versions
+ThefollowingAPIswillberemovedinthefuture,althoughthereiscurrentlynodatescheduledfortheirremoval.
+•argparse : Nestingargumentgroupsandnestingmutuallyexclusivegroupsaredeprecated.
+•array’s'u'formatcode( gh-57281)
+•builtins :
+–bool(NotImplemented) .
+–Generators: throw(type, exc, tb) andathrow(type, exc, tb) signature is deprecated: use
+throw(exc) andathrow(exc) instead,thesingleargumentsignature.
+–CurrentlyPythonacceptsnumericliteralsimmediatelyfollowedbykeywords,forexample 0in x,1or
+x,0if 1else 2 . Itallowsconfusingandambiguousexpressionslike [0x1for x in y] (whichcan
+be interpreted as [0x1 for x in y] or[0x1f or x in y] ). A syntax warning is raised if the
+numeric literal is immediately followed by one of keywords and,else,for,if,in,isandor. In a
+futurereleaseitwillbechangedtoasyntaxerror. ( gh-87999)
+–Support for __index__() and__int__() method returning non-int type: these methods will be re-
+quiredtoreturnaninstanceofastrictsubclassof int.
+–Supportfor __float__() methodreturningastrictsubclassof float: thesemethodswillberequired
+toreturnaninstanceof float.
+–Support for __complex__() method returning a strict subclass of complex: these methods will be
+requiredtoreturnaninstanceof complex.
+–Delegationof int()to__trunc__() method.
+–Passingacomplexnumberasthe realorimagargumentinthe complex() constructorisnowdeprecated;
+itshouldonlybepassedasasinglepositionalargument. (ContributedbySerhiyStorchakain gh-109218 .)
+•calendar :calendar.January andcalendar.February constants are deprecated and replaced by
+calendar.JANUARY andcalendar.FEBRUARY .(ContributedbyPrinceRoshanin gh-103636 .)
+•codeobject.co_lnotab : usethe codeobject.co_lines() methodinstead.
+•datetime :
+–utcnow() : use datetime.datetime.now(tz=datetime.UTC) .
+–utcfromtimestamp() : use datetime.datetime.fromtimestamp(timestamp,
+tz=datetime.UTC) .
+•gettext: Pluralvaluemustbeaninteger.
+27
+•importlib :
+–load_module() method: use exec_module() instead.
+–cache_from_source() debug_override parameter is deprecated: use the optimization parameter in-
+stead.
+•importlib.metadata :
+–EntryPoints tupleinterface.
+–Implicit Noneonreturnvalues.
+•logging: the warn()methodhasbeendeprecatedsincePython3.3,use warning() instead.
+•mailbox: UseofStringIOinputandtextmodeisdeprecated,useBytesIOandbinarymodeinstead.
+•os: Calling os.register_at_fork() inmulti-threadedprocess.
+•pydoc.ErrorDuringImport : Atuplevaluefor exc_infoparameterisdeprecated,useanexceptioninstance.
+•re: Morestrictrulesarenowappliedfornumericalgroupreferencesandgroupnamesinregularexpressions.
+Only sequence of ASCII digits is now accepted as a numerical reference. The group name in bytes patterns
+andreplacementstringscannowonlycontainASCIIlettersanddigitsandunderscore. (ContributedbySerhiy
+Storchakain gh-91760.)
+•sre_compile ,sre_constants andsre_parse modules.
+•shutil:rmtree() ’sonerrorparameterisdeprecatedinPython3.12;usethe onexcparameterinstead.
+•ssloptionsandprotocols:
+–ssl.SSLContext withoutprotocolargumentisdeprecated.
+–ssl.SSLContext :set_npn_protocols() andselected_npn_protocol() aredeprecated: use
+ALPNinstead.
+–ssl.OP_NO_SSL* options
+–ssl.OP_NO_TLS* options
+–ssl.PROTOCOL_SSLv3
+–ssl.PROTOCOL_TLS
+–ssl.PROTOCOL_TLSv1
+–ssl.PROTOCOL_TLSv1_1
+–ssl.PROTOCOL_TLSv1_2
+–ssl.TLSVersion.SSLv3
+–ssl.TLSVersion.TLSv1
+–ssl.TLSVersion.TLSv1_1
+•sysconfig.is_python_build() check_home parameterisdeprecatedandignored.
+•threading methods:
+–threading.Condition.notifyAll() : use notify_all() .
+–threading.Event.isSet() : use is_set() .
+–threading.Thread.isDaemon() ,threading.Thread.setDaemon() : use threading.
+Thread.daemon attribute.
+–threading.Thread.getName() ,threading.Thread.setName() : use threading.Thread.
+nameattribute.
+–threading.currentThread() : use threading.current_thread() .
+–threading.activeCount() : use threading.active_count() .
+28
+•typing.Text (gh-92332).
+•unittest.IsolatedAsyncioTestCase : it is deprecated to return a value that is not Nonefrom a test
+case.
+•urllib.parse deprecatedfunctions: urlparse() instead
+–splitattr()
+–splithost()
+–splitnport()
+–splitpasswd()
+–splitport()
+–splitquery()
+–splittag()
+–splittype()
+–splituser()
+–splitvalue()
+–to_bytes()
+•urllib.request :URLopener andFancyURLopener styleofinvokingrequestsisdeprecated. Usenewer
+urlopen() functionsandmethods.
+•wsgiref:SimpleHandler.stdout.write() shouldnotdopartialwrites.
+•xml.etree.ElementTree : Testingthetruthvalueofan Elementisdeprecated. Inafuturereleaseitwill
+alwaysreturn True. Preferexplicit len(elem) orelem is not None testsinstead.
+•zipimport.zipimporter.load_module() isdeprecated: use exec_module() instead.
+9CPython Bytecode Changes
+•Theopargof YIELD_VALUE isnow 1iftheyieldispartofayield-fromorawait,and 0otherwise. Theoparg
+ofRESUMEwaschangedtoaddabitindicatingiftheexcept-depthis1, whichisneededtooptimizeclosing
+ofgenerators. (ContributedbyIritKatrielin gh-111354 .)
+10C API Changes
+10.1New Features
+•AddthePyMonitoringCAPIforgenerating PEP 669monitoringevents:
+–PyMonitoringState
+–PyMonitoring_FirePyStartEvent()
+–PyMonitoring_FirePyResumeEvent()
+–PyMonitoring_FirePyReturnEvent()
+–PyMonitoring_FirePyYieldEvent()
+–PyMonitoring_FireCallEvent()
+–PyMonitoring_FireLineEvent()
+–PyMonitoring_FireJumpEvent()
+–PyMonitoring_FireBranchEvent()
+–PyMonitoring_FireCReturnEvent()
+29
+–PyMonitoring_FirePyThrowEvent()
+–PyMonitoring_FireRaiseEvent()
+–PyMonitoring_FireCRaiseEvent()
+–PyMonitoring_FireReraiseEvent()
+–PyMonitoring_FireExceptionHandledEvent()
+–PyMonitoring_FirePyUnwindEvent()
+–PyMonitoring_FireStopIterationEvent()
+–PyMonitoring_EnterScope()
+–PyMonitoring_ExitScope()
+(ContributedbyIritKatrielin gh-111997 ).
+•Add PyMutex, a lightweight mutex that occupies a single byte, and the new PyMutex_Lock() and
+PyMutex_Unlock() functions. PyMutex_Lock() will release the GIL (if currently held) if the operation
+needstoblock. (ContributedbySamGrossin gh-108724 .)
+•AddthePyTimeCAPItoprovideaccesstosystemclocks:
+–PyTime_t .
+–PyTime_MIN andPyTime_MAX .
+–PyTime_AsSecondsDouble() .
+–PyTime_Monotonic() .
+–PyTime_MonotonicRaw() .
+–PyTime_PerfCounter() .
+–PyTime_PerfCounterRaw() .
+–PyTime_Time() .
+–PyTime_TimeRaw() .
+(ContributedbyVictorStinnerandPetrViktorinin gh-110850 .)
+•Addthe PyDict_ContainsString() functionwiththesamebehavioras PyDict_Contains() ,butkeyis
+specifiedasa const char* UTF-8encodedbytesstring,ratherthana PyObject* . (ContributedbyVictor
+Stinneringh-108314 .)
+•Add the PyDict_GetItemRef() andPyDict_GetItemStringRef() functions, which behave similarly
+toPyDict_GetItemWithError() ,butreturnastrongreferenceinsteadofaborrowedreference. Moreover,
+thesefunctionsreturn -1onerror,removingtheneedtocheck PyErr_Occurred() . (ContributedbyVictor
+Stinneringh-106004 .)
+•Add the PyDict_SetDefaultRef() function, which behaves similarly to PyDict_SetDefault() , but
+returnsastrongreferenceinsteadofaborrowedreference. Thisfunctionreturns -1onerror, 0oninsertion,
+and1ifthekeywasalreadypresentinthedictionary. (ContributedbySamGrossin gh-112066 .)
+•Addthe PyDict_Pop() andPyDict_PopString() functionstoremoveakeyfromadictionaryandoption-
+allyreturntheremovedvalue. Thisissimilarto dict.pop() ,thoughthereisnodefaultvalue,and KeyError
+isnotraisedformissingkeys. (ContributedbyStefanBehnelandVictorStinnerin gh-111262 .)
+•Addthe PyMapping_GetOptionalItem() andPyMapping_GetOptionalItemString() functionsas
+alternatives to PyObject_GetItem() andPyMapping_GetItemString() respectively. The new func-
+tions do not raise KeyError if the requested key is missing from the mapping. These variants are more
+convenientandfasterifamissingkeyshouldnotbetreatedasafailure. (ContributedbySerhiyStorchakain
+gh-106307 .)
+•Addthe PyObject_GetOptionalAttr() andPyObject_GetOptionalAttrString() functionsasal-
+ternatives to PyObject_GetAttr() andPyObject_GetAttrString() respectively. The new functions
+donotraise AttributeError iftherequestedattributeisnotfoundontheobject. Thesevariantsaremore
+30
+convenientandfasterifthemissingattributeshouldnotbetreatedasafailure. (ContributedbySerhiyStor-
+chakaingh-106521 .)
+•Addthe PyErr_FormatUnraisable() functionasanextensionto PyErr_WriteUnraisable() thatal-
+lowscustomizingthewarningmessage. (ContributedbySerhiyStorchakain gh-108082 .)
+•Addnewfunctionsthatreturnastrongreferenceinsteadofaborrowedreferenceforframelocals,globals,and
+builtins,aspartof PEP 667:
+–PyEval_GetFrameBuiltins() replaces PyEval_GetBuiltins()
+–PyEval_GetFrameGlobals() replaces PyEval_GetGlobals()
+–PyEval_GetFrameLocals() replaces PyEval_GetLocals()
+(ContributedbyMarkShannonandTianGaoin gh-74929.)
+•Addthe Py_GetConstant() andPy_GetConstantBorrowed() functionstogetstrongorborrowedref-
+erences to constants. For example, Py_GetConstant(Py_CONSTANT_ZERO) returns a strong reference to
+theconstantzero. (ContributedbyVictorStinnerin gh-115754 .)
+•Addthe PyImport_AddModuleRef() functionasareplacementfor PyImport_AddModule() thatreturns
+astrongreferenceinsteadofaborrowedreference. (ContributedbyVictorStinnerin gh-105922 .)
+•Addthe Py_IsFinalizing() functiontocheckwhetherthemainPythoninterpreterisshuttingdown. (Con-
+tributedbyVictorStinnerin gh-108014 .)
+•Add the PyList_GetItemRef() function as a replacement for PyList_GetItem() that returns a strong
+referenceinsteadofaborrowedreference. (ContributedbySamGrossin gh-114329 .)
+•Addthe PyList_Extend() andPyList_Clear() functions,mirroringthePython list.extend() and
+list.clear() methods. (ContributedbyVictorStinnerin gh-111138 .)
+•Addthe PyLong_AsInt() function. Itbehavessimilarlyto PyLong_AsLong() ,butstorestheresultinaC
+intinsteadofaC long. (ContributedbyVictorStinnerin gh-108014 .)
+•Add the PyLong_AsNativeBytes() , PyLong_FromNativeBytes() ,and
+PyLong_FromUnsignedNativeBytes() functions to simplify converting between native integer
+typesandPython intobjects. (ContributedbySteveDowerin gh-111140 .)
+•Add PyModule_Add() function, which is similar to PyModule_AddObjectRef() and
+PyModule_AddObject() , but always steals a reference to the value. (Contributed by Serhiy Storchaka in
+gh-86493.)
+•Addthe PyObject_GenericHash() functionthatimplementsthedefaulthashingfunctionofaPythonob-
+ject. (ContributedbySerhiyStorchakain gh-113024 .)
+•Addthe Py_HashPointer() functiontohasharawpointer. (ContributedbyVictorStinnerin gh-111545 .)
+•Add the PyObject_VisitManagedDict() andPyObject_ClearManagedDict() functions. which
+must be called by the traverse and clear functions of a type using the Py_TPFLAGS_MANAGED_DICT flag.
+Thepythoncapi-compatproject can be used to use these functionswith Python 3.11 and 3.12. (Contributed
+byVictorStinnerin gh-107073 .)
+•Addthe PyRefTracer_SetTracer() andPyRefTracer_GetTracer() functions,whichenabletracking
+objectcreationanddestructioninthesamewaythatthe tracemalloc moduledoes. (ContributedbyPablo
+Galindoin gh-93502.)
+•Addthe PySys_AuditTuple() functionasanalternativeto PySys_Audit() thattakeseventargumentsas
+aPython tupleobject. (ContributedbyVictorStinnerin gh-85283.)
+•Add the PyThreadState_GetUnchecked() function as an alternative to PyThreadState_Get() that
+doesn’t kill the process with a fatal error if it is NULL. The caller is responsible for checking if the result is
+NULL.(ContributedbyVictorStinnerin gh-108867 .)
+•Addthe PyType_GetFullyQualifiedName() functiontogetthetype’sfullyqualifiedname. Themodule
+nameisprependedif type.__module__ isastringandisnotequaltoeither 'builtins' or'__main__' .
+(ContributedbyVictorStinnerin gh-111696 .)
+31
+•Add the PyType_GetModuleName() function to get the type’s module name. This is equivalent to getting
+thetype.__module__ attribute. (ContributedbyEricSnowandVictorStinnerin gh-111696 .)
+•Add the PyUnicode_EqualToUTF8AndSize() andPyUnicode_EqualToUTF8() functions to compare
+aUnicodeobjectwitha const char* UTF-8encodedstringand 1iftheyareequalor 0otherwise. These
+functionsdonotraiseexceptions. (ContributedbySerhiyStorchakain gh-110289 .)
+•Add the PyWeakref_GetRef() function as an alternative to PyWeakref_GetObject() that returns a
+strongreferenceor NULLifthereferentisnolongerlive. (ContributedbyVictorStinnerin gh-105927 .)
+•Addfixedvariantsoffunctionswhichsilentlyignoreerrors:
+–PyObject_HasAttrWithError() replaces PyObject_HasAttr() .
+–PyObject_HasAttrStringWithError() replaces PyObject_HasAttrString() .
+–PyMapping_HasKeyWithError() replaces PyMapping_HasKey() .
+–PyMapping_HasKeyStringWithError() replaces PyMapping_HasKeyString() .
+Thenewfunctionsreturn -1forerrorsandthestandard 1fortrueand 0forfalse.
+(ContributedbySerhiyStorchakain gh-108511 .)
+10.2Changed C APIs
+•The keywords parameter of PyArg_ParseTupleAndKeywords() and
+PyArg_VaParseTupleAndKeywords() now has type char *const* in C and const char *const*
+in C++, instead of char**. In C++, this makes these functions compatible with arguments of type const
+char *const* ,const char** , orchar *const* without an explicit type cast. In C, the functions
+only support arguments of type char *const* . This can be overridden with the PY_CXX_CONST macro.
+(ContributedbySerhiyStorchakain gh-65210.)
+•PyArg_ParseTupleAndKeywords() nowsupportsnon-ASCIIkeywordparameternames. (Contributedby
+SerhiyStorchakain gh-110815 .)
+•The PyCode_GetFirstFree() function is now unstable API and is now named
+PyUnstable_Code_GetFirstFree() . (ContributedbyBogdanRomanyukin gh-115781 .)
+•The PyDict_GetItem() , PyDict_GetItemString() , PyMapping_HasKey() ,
+PyMapping_HasKeyString() ,PyObject_HasAttr() ,PyObject_HasAttrString() , and
+PySys_GetObject() functions, each of which clears all errors which occurred when calling them
+now reports these errors using sys.unraisablehook() . You may replace them with other functions as
+recommendedinthedocumentation. (ContributedbySerhiyStorchakain gh-106672 .)
+•Addsupportforthe %T,%#T,%Nand%#Nformatsto PyUnicode_FromFormat() :
+–%T:Getthefullyqualifiednameofanobjecttype
+–%#T:Asabove,butuseacolonastheseparator
+–%N:Getthefullyqualifiednameofatype
+–%#N:Asabove,butuseacolonastheseparator
+SeePEP 737formoreinformation. (ContributedbyVictorStinnerin gh-111696 .)
+•Younolongerhavetodefinethe PY_SSIZE_T_CLEAN macrobeforeincluding Python.h whenusing #for-
+matsinformatcodes. APIsacceptingtheformatcodesalwaysuse Py_ssize_t for#formats. (Contributed
+byInadaNaokiin gh-104922 .)
+•IfPythonisbuiltindebugmodeor with assertions ,PyTuple_SET_ITEM() andPyList_SET_ITEM()
+nowchecktheindexargumentwithanassertion. (ContributedbyVictorStinnerin gh-106168 .)
+32
+10.3Limited C API Changes
+•ThefollowingfunctionsarenowincludedintheLimitedCAPI:
+–PyMem_RawMalloc()
+–PyMem_RawCalloc()
+–PyMem_RawRealloc()
+–PyMem_RawFree()
+–PySys_Audit()
+–PySys_AuditTuple()
+–PyType_GetModuleByDef()
+(ContributedbyVictorStinnerin gh-85283,gh-85283,andgh-116936 .)
+•Pythonbuiltwith --with-trace-refs (tracingreferences)nowsupportstheLimitedAPI.(Contributedby
+VictorStinnerin gh-108634 .)
+10.4Removed C APIs
+•Remove several functions, macros, variables, etc with names prefixed by _Pyor_PY(which are considered
+private). If your project is affected by one of these removals and you believe that the removed API should
+remainavailable,pleaseopenanewissuetorequestapublicCAPIandadd cc: @vstinner totheissueto
+notifyVictorStinner. (ContributedbyVictorStinnerin gh-106320 .)
+•RemoveoldbufferprotocolsdeprecatedinPython3.0. Usebufferobjectsinstead.
+–PyObject_CheckReadBuffer() : Use PyObject_CheckBuffer() to test whether the ob-
+ject supports the buffer protocol. Note that PyObject_CheckBuffer() doesn’t guarantee that
+PyObject_GetBuffer() willsucceed. Totestiftheobjectisactuallyreadable,seethenextexample
+ofPyObject_GetBuffer() .
+–PyObject_AsCharBuffer() ,PyObject_AsReadBuffer() : Use PyObject_GetBuffer() and
+PyBuffer_Release() instead:
+Py_buffer view;
+if(PyObject_GetBuffer(obj, &view, PyBUF_SIMPLE) <0){
+return NULL ;
+}
+// Use `view.buf` and `view.len` to read from the buffer.
+// You may need to cast buf as `(const char*)view.buf`.
+PyBuffer_Release( &view);
+–PyObject_AsWriteBuffer() : Use PyObject_GetBuffer() andPyBuffer_Release() in-
+stead:
+Py_buffer view;
+if(PyObject_GetBuffer(obj, &view, PyBUF_WRITABLE) <0){
+return NULL ;
+}
+// Use `view.buf` and `view.len` to write to the buffer.
+PyBuffer_Release( &view);
+(ContributedbyInadaNaokiin gh-85275.)
+•RemovevariousfunctionsdeprecatedinPython3.9:
+–PyEval_CallObject() , PyEval_CallObjectWithKeywords() : Use
+PyObject_CallNoArgs() orPyObject_Call() instead.
+33
+ÁWarning
+InPyObject_Call() , positional arguments must be a tupleand must not be NULL, and
+keyword arguments must be a dictorNULL, whereas the removed functions checked
+argument types and accepted NULLpositional and keyword arguments. To replace
+PyEval_CallObjectWithKeywords(func, NULL, kwargs) with PyObject_Call() ,
+passanemptytupleaspositionalargumentsusing PyTuple_New(0) .
+–PyEval_CallFunction() : Use PyObject_CallFunction() instead.
+–PyEval_CallMethod() : Use PyObject_CallMethod() instead.
+–PyCFunction_Call() : Use PyObject_Call() instead.
+(ContributedbyVictorStinnerin gh-105107 .)
+•RemovethefollowingoldfunctionstoconfigurethePythoninitialization,deprecatedinPython3.11:
+–PySys_AddWarnOptionUnicode() : Use PyConfig.warnoptions instead.
+–PySys_AddWarnOption() : Use PyConfig.warnoptions instead.
+–PySys_AddXOption() : Use PyConfig.xoptions instead.
+–PySys_HasWarnOptions() : Use PyConfig.xoptions instead.
+–PySys_SetPath() : Set PyConfig.module_search_paths instead.
+–Py_SetPath() : Set PyConfig.module_search_paths instead.
+–Py_SetStandardStreamEncoding() : Set PyConfig.stdio_encoding instead, and set also
+maybe PyConfig.legacy_windows_stdio (onWindows).
+–_Py_SetProgramFullPath() : Set PyConfig.executable instead.
+Use the new PyConfig API of the Python Initialization Configuration instead ( PEP 587), added to Python
+3.8. (ContributedbyVictorStinnerin gh-105145 .)
+•Remove PyEval_AcquireLock() andPyEval_ReleaseLock() functions, deprecated in Python 3.2.
+Theydidn’tupdatethecurrentthreadstate. Theycanbereplacedwith:
+–PyEval_SaveThread() andPyEval_RestoreThread() ;
+–low-level PyEval_AcquireThread() andPyEval_RestoreThread() ;
+–orPyGILState_Ensure() andPyGILState_Release() .
+(ContributedbyVictorStinnerin gh-105182 .)
+•Remove the PyEval_ThreadsInitialized() function, deprecated in Python 3.9. Since Python
+3.7, Py_Initialize() always creates the GIL: calling PyEval_InitThreads() does nothing and
+PyEval_ThreadsInitialized() alwaysreturnsnon-zero. (ContributedbyVictorStinnerin gh-105182 .)
+•Remove the _PyInterpreterState_Get() alias to PyInterpreterState_Get() which was kept
+for backward compatibility with Python 3.8. The pythoncapi-compat project can be used to get
+PyInterpreterState_Get() onPython3.8andolder. (ContributedbyVictorStinnerin gh-106320 .)
+•Removetheprivate _PyObject_FastCall() function: use PyObject_Vectorcall() whichisavailable
+sincePython3.8( PEP 590). (ContributedbyVictorStinnerin gh-106023 .)
+•Removethe cpython/pytime.h headerfile,whichonlycontainedprivatefunctions. (ContributedbyVictor
+Stinneringh-106316 .)
+•Removetheundocumented PY_TIMEOUT_MAX constantfromthelimitedCAPI.(ContributedbyVictorStin-
+neringh-110014 .)
+•Removetheoldtrashcanmacros Py_TRASHCAN_SAFE_BEGIN andPy_TRASHCAN_SAFE_END .Replaceboth
+with the new macros Py_TRASHCAN_BEGIN andPy_TRASHCAN_END . (Contributed by Irit Katriel in gh-
+105111.)
+34
+10.5Deprecated C APIs
+•DeprecateoldPythoninitializationfunctions:
+–PySys_ResetWarnOptions() : Clear sys.warnoptions andwarnings.filters instead.
+–Py_GetExecPrefix() : Get sys.exec_prefix instead.
+–Py_GetPath() : Get sys.path instead.
+–Py_GetPrefix() : Get sys.prefix instead.
+–Py_GetProgramFullPath() : Get sys.executable instead.
+–Py_GetProgramName() : Get sys.executable instead.
+–Py_GetPythonHome() : Get PyConfig.home orthe PYTHONHOME environmentvariableinstead.
+(ContributedbyVictorStinnerin gh-105145 .)
+•Softdeprecatethe PyEval_GetBuiltins() ,PyEval_GetGlobals() ,and PyEval_GetLocals() func-
+tions,whichreturnaborrowedreference. (Softdeprecatedaspartof PEP 667.)
+•Deprecate the PyImport_ImportModuleNoBlock() function, which is just an alias to
+PyImport_ImportModule() sincePython3.3. (ContributedbyVictorStinnerin gh-105396 .)
+•Soft deprecate the PyModule_AddObject() function. It should be replaced with PyModule_Add() or
+PyModule_AddObjectRef() . (ContributedbySerhiyStorchakain gh-86493.)
+•Deprecatetheold Py_UNICODE andPY_UNICODE_TYPE typesandthe Py_UNICODE_WIDE define. Usethe
+wchar_ttype directly instead. Since Python 3.3, Py_UNICODE andPY_UNICODE_TYPE are just aliases to
+wchar_t. (ContributedbyVictorStinnerin gh-105156 .)
+•Deprecatethe PyWeakref_GetObject() andPyWeakref_GET_OBJECT() functions,whichreturnabor-
+rowedreference. Replacethemwiththenew PyWeakref_GetRef() function,whichreturnsastrongrefer-
+ence. The pythoncapi-compatproject canbeusedtoget PyWeakref_GetRef() onPython3.12andolder.
+(ContributedbyVictorStinnerin gh-105927 .)
+Pending Removal in Python 3.14
+•Thema_version_tag fieldin PyDictObject forextensionmodules( PEP 699;gh-101193 ).
+•Creating immutable types withmutablebases( gh-95388).
+•FunctionstoconfigurePython’sinitialization,deprecatedinPython3.11:
+–PySys_SetArgvEx() : Set PyConfig.argv instead.
+–PySys_SetArgv() : Set PyConfig.argv instead.
+–Py_SetProgramName() : Set PyConfig.program_name instead.
+–Py_SetPythonHome() : Set PyConfig.home instead.
+ThePy_InitializeFromConfig() APIshouldbeusedwith PyConfig instead.
+•Globalconfigurationvariables:
+–Py_DebugFlag : Use PyConfig.parser_debug instead.
+–Py_VerboseFlag : Use PyConfig.verbose instead.
+–Py_QuietFlag : Use PyConfig.quiet instead.
+–Py_InteractiveFlag : Use PyConfig.interactive instead.
+–Py_InspectFlag : Use PyConfig.inspect instead.
+–Py_OptimizeFlag : Use PyConfig.optimization_level instead.
+–Py_NoSiteFlag : Use PyConfig.site_import instead.
+–Py_BytesWarningFlag : Use PyConfig.bytes_warning instead.
+35
+–Py_FrozenFlag : Use PyConfig.pathconfig_warnings instead.
+–Py_IgnoreEnvironmentFlag : Use PyConfig.use_environment instead.
+–Py_DontWriteBytecodeFlag : Use PyConfig.write_bytecode instead.
+–Py_NoUserSiteDirectory : Use PyConfig.user_site_directory instead.
+–Py_UnbufferedStdioFlag : Use PyConfig.buffered_stdio instead.
+–Py_HashRandomizationFlag : Use PyConfig.use_hash_seed andPyConfig.hash_seed in-
+stead.
+–Py_IsolatedFlag : Use PyConfig.isolated instead.
+–Py_LegacyWindowsFSEncodingFlag : Use PyPreConfig.legacy_windows_fs_encoding in-
+stead.
+–Py_LegacyWindowsStdioFlag : Use PyConfig.legacy_windows_stdio instead.
+–Py_FileSystemDefaultEncoding : Use PyConfig.filesystem_encoding instead.
+–Py_HasFileSystemDefaultEncoding : Use PyConfig.filesystem_encoding instead.
+–Py_FileSystemDefaultEncodeErrors : Use PyConfig.filesystem_errors instead.
+–Py_UTF8Mode : Use PyPreConfig.utf8_mode instead. (see Py_PreInitialize() )
+ThePy_InitializeFromConfig() APIshouldbeusedwith PyConfig instead.
+Pending Removal in Python 3.15
+•Thebundledcopyof libmpdecimal .
+•ThePyImport_ImportModuleNoBlock() : Use PyImport_ImportModule() instead.
+•PyWeakref_GetObject() andPyWeakref_GET_OBJECT() : Use PyWeakref_GetRef() instead.
+•Py_UNICODE typeandthe Py_UNICODE_WIDE macro: Use wchar_tinstead.
+•Pythoninitializationfunctions:
+–PySys_ResetWarnOptions() : Clear sys.warnoptions andwarnings.filters instead.
+–Py_GetExecPrefix() : Get sys.base_exec_prefix andsys.exec_prefix instead.
+–Py_GetPath() : Get sys.path instead.
+–Py_GetPrefix() : Get sys.base_prefix andsys.prefix instead.
+–Py_GetProgramFullPath() : Get sys.executable instead.
+–Py_GetProgramName() : Get sys.executable instead.
+–Py_GetPythonHome() : Get PyConfig.home orthe PYTHONHOME environmentvariableinstead.
+Pending Removal in Future Versions
+The following APIs are deprecated and will be removed, although there is currently no date scheduled for their
+removal.
+•Py_TPFLAGS_HAVE_FINALIZE :UnneededsincePython3.8.
+•PyErr_Fetch() : Use PyErr_GetRaisedException() instead.
+•PyErr_NormalizeException() : Use PyErr_GetRaisedException() instead.
+•PyErr_Restore() : Use PyErr_SetRaisedException() instead.
+•PyModule_GetFilename() : Use PyModule_GetFilenameObject() instead.
+•PyOS_AfterFork() : Use PyOS_AfterFork_Child() instead.
+•PySlice_GetIndicesEx() : Use PySlice_Unpack() andPySlice_AdjustIndices() instead.
+36
+•PyUnicode_AsDecodedObject() : Use PyCodec_Decode() instead.
+•PyUnicode_AsDecodedUnicode() : Use PyCodec_Decode() instead.
+•PyUnicode_AsEncodedObject() : Use PyCodec_Encode() instead.
+•PyUnicode_AsEncodedUnicode() : Use PyCodec_Encode() instead.
+•PyUnicode_READY() : UnneededsincePython3.12
+•PyErr_Display() : Use PyErr_DisplayException() instead.
+•_PyErr_ChainExceptions() : Use _PyErr_ChainExceptions1() instead.
+•PyBytesObject.ob_shash member: call PyObject_Hash() instead.
+•PyDictObject.ma_version_tag member.
+•ThreadLocalStorage(TLS)API:
+–PyThread_create_key() : Use PyThread_tss_alloc() instead.
+–PyThread_delete_key() : Use PyThread_tss_free() instead.
+–PyThread_set_key_value() : Use PyThread_tss_set() instead.
+–PyThread_get_key_value() : Use PyThread_tss_get() instead.
+–PyThread_delete_key_value() : Use PyThread_tss_delete() instead.
+–PyThread_ReInitTLS() : UnneededsincePython3.7.
+11Build Changes
+•arm64-apple-ios andarm64-apple-ios-simulator arebothnow PEP 11tier3platforms. ( PEP 730
+writtenandimplementationcontributedbyRussellKeith-Mageein gh-114099 .)
+•aarch64-linux-android andx86_64-linux-android are both now PEP 11tier 3 platforms. ( PEP
+738writtenandimplementationcontributedbyMalcolmSmithin gh-116622 .)
+•wasm32-wasi isnowa PEP 11tier2platform. (ContributedbyBrettCannonin gh-115192 .)
+•wasm32-emscripten is no longer a PEP 11supported platform. (Contributed by Brett Cannon in gh-
+115192.)
+•Building CPython now requires a compiler with support for the C11 atomic library, GCC built-in atomic
+functions,orMSVCinterlockedintrinsics.
+•Autoconf 2.71 and aclocal 1.16.5 are now required to regenerate the configure script. (Contributed by
+ChristianHeimesin gh-89886andbyVictorStinnerin gh-112090 .)
+•SQLite3.15.2ornewerisrequiredtobuildthe sqlite3extensionmodule. (ContributedbyErlendAasland
+ingh-105875 .)
+•CPython now bundles the mimalloc library by default. It is licensed under the MIT license; see mimalloc
+license. Thebundledmimallochascustomchanges,see gh-113141 fordetails. (ContributedbyDinoViehland
+ingh-109914 .)
+•The configure option --with-system-libmpdec now defaults to yes. The bundled copy of
+libmpdecimal willberemovedinPython3.15.
+•Python built with configure --with-trace-refs (tracing references) is now ABI compatible with the
+Pythonreleasebuildanddebugbuild. (ContributedbyVictorStinnerin gh-108634 .)
+•OnPOSIXsystems,thepkg-config( .pc)filenamesnowincludetheABIflags. Forexample,thefree-threaded
+buildgenerates python-3.13t.pc andthedebugbuildgenerates python-3.13d.pc .
+•The errno,fcntl,grp,md5,pwd,resource ,termios,winsound ,_ctypes_test ,
+_multiprocessing.posixshmem , _scproxy , _stat, _statistics , _testconsole ,
+37
+_testimportmultiple and_uuidC extensions are now built with the limited C API. (Contributed
+byVictorStinnerin gh-85283.)
+12Porting to Python 3.13
+Thissectionlistspreviouslydescribedchangesandotherbugfixesthatmayrequirechangestoyourcode.
+12.1Changes in the Python API
+•PEP 667introducesseveralchangestothesemanticsof locals() andf_locals :
+–Calling locals() inanoptimizedscopenowproducesanindependentsnapshotoneachcall,andhence
+nolongerimplicitlyupdatespreviouslyreturnedreferences. ObtainingthelegacyCPythonbehaviornow
+requires explicit calls to update the initially returned dictionary with the results of subsequent calls to
+locals() . Code execution functions that implicitly target locals() (such as execandeval) must
+bepassedanexplicitnamespacetoaccesstheirresultsinanoptimizedscope. (Changedaspartof PEP
+667.)
+–Calling locals() fromacomprehensionatmoduleorclassscope(includingvia execoreval)once
+more behaves as if the comprehension were running as an independent nested function (i.e. the local
+variables from the containing scope are not included). In Python 3.12, this had changed to include the
+localvariablesfromthecontainingscopewhenimplementing PEP 709. (Changedaspartof PEP 667.)
+–Accessing FrameType.f_locals inanoptimizedscopenowreturnsawrite-throughproxyratherthan
+asnapshotthatgetsupdatedatill-specifiedtimes. Ifasnapshotisdesired, itmustbecreatedexplicitly
+withdictortheproxy’s .copy()method. (Changedaspartof PEP 667.)
+•functools.partial now emits a FutureWarning when used as a method. The behavior will change in
+futurePythonversions. Wrapitin staticmethod() ifyouwanttopreservetheoldbehavior. (Contributed
+bySerhiyStorchakain gh-121027 .)
+•AnOSErroris now raised by getpass.getuser() for any failure to retrieve a username, instead of
+ImportError onnon-Unixplatformsor KeyError onUnixplatformswherethepassworddatabaseisempty.
+•Thevalueofthe modeattributeof gzip.GzipFile isnowastring( 'rb'or'wb')insteadofaninteger( 1or
+2). Thevalueofthe modeattributeofthereadablefile-likeobjectreturnedby zipfile.ZipFile.open()
+isnow 'rb'insteadof 'r'. (ContributedbySerhiyStorchakain gh-115961 .)
+•mailbox.Maildir nowignoresfileswithaleadingdot( .). (ContributedbyZackerySpytzin gh-65559.)
+•pathlib.Path.glob() andrglob()nowreturnbothfilesanddirectoriesifapatternthatendswith“ **”is
+given,ratherthandirectoriesonly. Addatrailingslashtokeepthepreviousbehaviorandonlymatchdirectories.
+•Thethreading modulenowexpectsthe _threadmoduletohavean _is_main_interpreter() function.
+Thisfunctiontakesnoargumentsandreturns Trueifthecurrentinterpreteristhemaininterpreter.
+Any library or application that provides a custom _thread module must provide
+_is_main_interpreter() ,justlikethemodule’sother“private”attributes. ( gh-112826 .)
+12.2Changes in the C API
+•Python.h nolongerincludesthe <ieeefp.h> standardheader. Itwasincludedforthe finite() function
+whichisnowprovidedbythe <math.h> header. Itshouldnowbeincludedexplicitlyifneeded. Removealso
+theHAVE_IEEEFP_H macro. (ContributedbyVictorStinnerin gh-108765 .)
+•Python.h nolongerincludesthesestandardheaderfiles: <time.h> ,<sys/select.h> and<sys/time.
+h>. If needed, they should now be included explicitly. For example, <time.h> provides the clock()and
+gmtime() functions, <sys/select.h> providesthe select() function,and <sys/time.h> providesthe
+futimes() ,gettimeofday() andsetitimer() functions. (ContributedbyVictorStinnerin gh-108765 .)
+•OnWindows, Python.h nolongerincludesthe <stddef.h> standardheaderfile. Ifneeded,itshouldnow
+beincludedexplicitly. Forexample, itprovides offsetof() function, and size_tandptrdiff_t types.
+Including <stddef.h> explicitly was already needed by all other platforms, the HAVE_STDDEF_H macro is
+onlydefinedonWindows. (ContributedbyVictorStinnerin gh-108765 .)
+38
+•If the Py_LIMITED_API macro is defined, Py_BUILD_CORE ,Py_BUILD_CORE_BUILTIN and
+Py_BUILD_CORE_MODULE macros are now undefined by <Python.h> . (Contributed by Victor Stin-
+neringh-85283.)
+•Theoldtrashcanmacros Py_TRASHCAN_SAFE_BEGIN andPy_TRASHCAN_SAFE_END wereremoved. They
+shouldbereplacedbythenewmacros Py_TRASHCAN_BEGIN andPy_TRASHCAN_END .
+Atp_dealloc functionthathastheoldmacros,suchas:
+static void
+mytype_dealloc(mytype *p)
+{
+PyObject_GC_UnTrack(p);
+Py_TRASHCAN_SAFE_BEGIN(p);
+...
+Py_TRASHCAN_SAFE_END
+}
+shouldmigratetothenewmacrosasfollows:
+static void
+mytype_dealloc(mytype *p)
+{
+PyObject_GC_UnTrack(p);
+Py_TRASHCAN_BEGIN(p, mytype_dealloc)
+...
+Py_TRASHCAN_END
+}
+Note that Py_TRASHCAN_BEGIN has a second argument which should be the deallocation function it is in.
+ThenewmacroswereaddedinPython3.8andtheoldmacrosweredeprecatedinPython3.11. (Contributed
+byIritKatrielin gh-105111 .)
+•PEP 667introducesseveralchangestoframe-relatedfunctions:
+–Theeffectsofmutatingthedictionaryreturnedfrom PyEval_GetLocals() inanoptimizedscopehave
+changed. Newdictentriesaddedthiswaywillnow onlybevisibletosubsequent PyEval_GetLocals()
+calls in that frame, as PyFrame_GetLocals() ,locals() , and FrameType.f_locals no longer
+access the same underlying cached dictionary. Changes made to entries for actual variable names
+and names added via the write-through proxy interfaces will be overwritten on subsequent calls to
+PyEval_GetLocals() in that frame. The recommended code update depends on how the function
+wasbeingused,sorefertothedeprecationnoticeonthefunctionfordetails.
+–Calling PyFrame_GetLocals() inanoptimizedscopenowreturnsawrite-throughproxyratherthan
+asnapshotthatgetsupdatedatill-specifiedtimes. Ifasnapshotisdesired, itmustbecreatedexplicitly
+(e.g. with PyDict_Copy() ),orbycallingthenew PyEval_GetFrameLocals() API.
+–PyFrame_FastToLocals() andPyFrame_FastToLocalsWithError() nolongerhaveanyeffect.
+CallingthesefunctionshasbeenredundantsincePython3.11,when PyFrame_GetLocals() wasfirst
+introduced.
+–PyFrame_LocalsToFast() no longer has any effect. Calling this function is redundant now that
+PyFrame_GetLocals() returnsawrite-throughproxyforoptimizedscopes.
+13Regression Test Changes
+•Python built with configure --with-pydebug now supports a -X presite=package.module
+command-line option. If used, it specifies a module that should be imported early in the lifecycle of the
+interpreter,before site.pyisexecuted. (ContributedbyŁukaszLangain gh-110769 .)
+39
+14Notable changes in 3.13.1
+14.1sys
+•Thepreviouslyundocumentedspecialfunction sys.getobjects() ,whichonlyexistsinspecializedbuilds
+ofPython,maynowreturnobjectsfromotherinterpretersthantheoneit’scalledin.
+40
+Index
+C
+Common Vulnerabilities and Exposures
+CVE 2023-27043 ,12
+CVE 2023-52425 ,18
+CVE 2024-4030 ,14,17
+E
+environment variable
+PYTHON_BASIC_REPL ,5
+PYTHON_COLORS ,4,5,12
+PYTHON_CPU_COUNT ,14
+PYTHON_FROZEN_MODULES ,9
+PYTHON_GIL ,6
+PYTHON_HISTORY ,9
+PYTHON_PERF_JIT_SUPPORT ,9
+PYTHONHOME ,35,36
+PYTHONLEGACYWINDOWSFSENCODING ,23,27
+P
+Python Enhancement Proposals
+PEP 11,8,37
+PEP 11#tier-2 ,4
+PEP 11#tier-3 ,4
+PEP 587,34
+PEP 590,34
+PEP 594,3,19
+PEP 602,5
+PEP 626,26
+PEP 667,3,7,8,35,38
+PEP 669,4,29
+PEP 696,4
+PEP 699,35
+PEP 702,4,18
+PEP 703,3,7
+PEP 705,4,18
+PEP 709,38
+PEP 719,3
+PEP 730,4,8
+PEP 737,32
+PEP 738,4,8
+PEP 742,4,18
+PEP 744,3,7
+PYTHON_BASIC_REPL ,5
+PYTHON_COLORS ,4,5,12
+PYTHON_CPU_COUNT ,14
+PYTHON_FROZEN_MODULES ,9
+PYTHON_GIL ,6
+PYTHON_HISTORY ,9
+PYTHON_PERF_JIT_SUPPORT ,9
+PYTHONHOME ,35,36
+PYTHONLEGACYWINDOWSFSENCODING ,23,27
+R
+RFC
+RFC 5280 ,16
+41

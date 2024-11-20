@@ -1,0 +1,10 @@
+Argument Clinic How-To
+Release 3.13.0
+Guido van Rossum and the Python development team
+November 15, 2024
+Python Software Foundation
+Email: docs@python.org
+Contents
+®Note
+The Argument Clinic How-TO has been moved to the Python Developer’s Guide .
+1
