@@ -1,25 +1,53 @@
 import os
-from pdf_to_text import batch_convert_pdfs
+from haystack import Pipeline, Document
+from haystack.utils import Secret
+from haystack.document_stores.in_memory import InMemoryDocumentStore
+from haystack.components.retrievers.in_memory import InMemoryBM25Retriever
+from haystack.components.generators import OpenAIGenerator
+from haystack.components.builders.answer_builder import AnswerBuilder
+from haystack.components.builders.prompt_builder import PromptBuilder
 
 def main():
-    """
-    Main function to convert PDFs to text files.
-    """
-    pdf_dir = "data/raw"          # Directory containing input PDFs
-    output_dir = "data/processed" # Directory to save the text files
+    # Write documents to InMemoryDocumentStore
+    document_store = InMemoryDocumentStore()
+    document_store.write_documents([
+        Document(content="My name is Jean and I live in Paris."), 
+        Document(content="My name is Mark and I live in Berlin."), 
+        Document(content="My name is Giorgio and I live in Rome.")
+    ])
 
-    # Ensure the directories exist
-    if not os.path.exists(pdf_dir):
-        print(f"Error: Input directory '{pdf_dir}' does not exist. Please add your PDFs there.")
-        return
+    # Build a RAG pipeline
+    prompt_template = """
+    Given these documents, answer the question.
+    Documents:
+    {% for doc in documents %}
+        {{ doc.content }}
+    {% endfor %}
+    Question: {{question}}
+    Answer:
+    """
 
-    # Start PDF-to-text conversion
-    print(f"\nConverting PDFs from '{pdf_dir}' to text files in '{output_dir}'...\n")
-    try:
-        batch_convert_pdfs(pdf_dir, output_dir)
-        print("\nPDF conversion completed")
-    except Exception as e:
-        print(f"\nAn error occurred during the conversion process: {e}")
+    retriever = InMemoryBM25Retriever(document_store=document_store)
+    prompt_builder = PromptBuilder(template=prompt_template)
+    llm = OpenAIGenerator()
+
+    rag_pipeline = Pipeline()
+    rag_pipeline.add_component("retriever", retriever)
+    rag_pipeline.add_component("prompt_builder", prompt_builder)
+    rag_pipeline.add_component("llm", llm)
+    rag_pipeline.connect("retriever", "prompt_builder.documents")
+    rag_pipeline.connect("prompt_builder", "llm")
+
+    # Ask a question
+    question = "Who lives in Paris?"
+    results = rag_pipeline.run(
+        {
+            "retriever": {"query": question},
+            "prompt_builder": {"question": question},
+        }
+    )
+
+    print(results["llm"]["replies"])
 
 if __name__ == "__main__":
     main()
