@@ -1,29 +1,23 @@
 import os
-from haystack import Pipeline, Document
-from haystack.document_stores.in_memory import InMemoryDocumentStore
-from haystack.components.generators import OpenAIGenerator
-from haystack.components.builders.prompt_builder import PromptBuilder
 from pathlib import Path
-from datasets import load_dataset
+from getpass import getpass
+from haystack import Pipeline
 from haystack.components.embedders import SentenceTransformersDocumentEmbedder
 from haystack.components.embedders import SentenceTransformersTextEmbedder
 from haystack.components.retrievers.in_memory import InMemoryEmbeddingRetriever
 from haystack.components.builders import PromptBuilder
-from getpass import getpass
 from haystack.components.generators import OpenAIGenerator
-from haystack.components.converters import TextFileToDocument
 from haystack.components.writers import DocumentWriter
 from haystack.components.converters import MarkdownToDocument, PyPDFToDocument, TextFileToDocument
 from haystack.components.preprocessors import DocumentSplitter, DocumentCleaner
 from haystack.components.routers import FileTypeRouter
 from haystack.components.joiners import DocumentJoiner
-from haystack.components.embedders import SentenceTransformersDocumentEmbedder
-from haystack import Pipeline
 from haystack.document_stores.in_memory import InMemoryDocumentStore
 
 
-def main():
+def haystack_setup():
 
+    # Use an InMemoryDocumentStore - Not suitable for production applications!
     document_store = InMemoryDocumentStore()
     file_type_router = FileTypeRouter(mime_types=["text/plain", "application/pdf", "text/markdown"])
     text_file_converter = TextFileToDocument()
@@ -37,6 +31,7 @@ def main():
     document_embedder = SentenceTransformersDocumentEmbedder(model="sentence-transformers/all-MiniLM-L6-v2")
     document_writer = DocumentWriter(document_store)
 
+    # Create a preprocessing pipeline. This supports conversion from PDF, markdown or txt, and cleans and prepares the documents
     preprocessing_pipeline = Pipeline()
     preprocessing_pipeline.add_component(instance=file_type_router, name="file_type_router")
     preprocessing_pipeline.add_component(instance=text_file_converter, name="text_file_converter")
@@ -59,8 +54,11 @@ def main():
     preprocessing_pipeline.connect("document_splitter", "document_embedder")
     preprocessing_pipeline.connect("document_embedder", "document_writer")
 
-    preprocessing_pipeline.run({"file_type_router": {"sources": list(Path("data/processed").glob("**/*"))}})
-
+    # Load in the docs. It takes time to load in all the docs, so you can start with a small batch of either txt files or PDFs
+    #preprocessing_pipeline.run({"file_type_router": {"sources": list(Path("data/raw/small_batch").glob("**/*"))}})
+    #preprocessing_pipeline.run({"file_type_router": {"sources": list(Path("data/raw").glob("**/*"))}})
+    preprocessing_pipeline.run({"file_type_router": {"sources": list(Path("data/processed/small_batch").glob("**/*"))}})
+    #preprocessing_pipeline.run({"file_type_router": {"sources": list(Path("data/processed").glob("**/*"))}})
 
     template = """
     Given the following information, answer the question.
@@ -76,12 +74,13 @@ def main():
 
     prompt_builder = PromptBuilder(template=template)
 
+    # You can swap out the OpenAIGenerator for some other LLM like HuggingFaceLocalGenerator
     if "OPENAI_API_KEY" not in os.environ:
         os.environ["OPENAI_API_KEY"] = getpass("Enter OpenAI API key:")
     generator = OpenAIGenerator(model="gpt-4o-mini")
 
     basic_rag_pipeline = Pipeline()
-    # Add components to your pipeline
+    # Add the pipeline components
     basic_rag_pipeline.add_component("embedder", SentenceTransformersTextEmbedder(model="sentence-transformers/all-MiniLM-L6-v2"))
     basic_rag_pipeline.add_component("retriever", InMemoryEmbeddingRetriever(document_store=document_store))
     basic_rag_pipeline.add_component("prompt_builder", PromptBuilder(template=template))
@@ -92,11 +91,4 @@ def main():
     basic_rag_pipeline.connect("retriever", "prompt_builder.documents")
     basic_rag_pipeline.connect("prompt_builder", "llm")
 
-    question = "Explain logging in 100 words"
-
-    response = basic_rag_pipeline.run({"embedder": {"text": question}, "prompt_builder": {"question": question}})
-
-    print(response["llm"]["replies"][0])
-  
-if __name__ == "__main__":
-    main()
+    return basic_rag_pipeline

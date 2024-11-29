@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>String Input App</title>
+</head>
+<body>
+    <h1>Python Classroom: Ask anything about Python3!</h1>
+    <form method="POST">
+        <label for="user_input">Your question:</label><br>
+        <input type="text" id="user_input" name="user_input" required style="width: 100%; padding: 8px;"><br><br>
+        <button type="submit">Submit</button>
+    </form>
+    <br>
+    <label for="response">Answer:</label><br>
+    <textarea id="response" readonly style="width: 100%; height: 100px; padding: 8px;">{{ response }}</textarea>
+</body>
+</html>

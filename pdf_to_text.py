@@ -1,6 +1,8 @@
 import os
 from PyPDF2 import PdfReader
 
+# Simple utility to convert the python PDFs downloaded from https://docs.python.org/3/ to text files.
+# Note that the Haystack pipeline in haystack_setup.py can work with PDFs or Text files though.
 def convert_pdf_to_text(pdf_path, output_dir):
 
     # Extract the PDF file name (without extension)
